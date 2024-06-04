@@ -3,12 +3,13 @@ name: Validate GraalPy e2e
 on:
   push:
     branches:
-      - main
+      - pr-863-test
     paths-ignore:
       - '**.md'
   pull_request:
     paths-ignore:
       - '**.md'
+  workflow_dispatch:
 
 jobs:
   setup-graalpy:
