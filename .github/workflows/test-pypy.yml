@@ -168,4 +168,3 @@ jobs:
           EXECUTABLE=${EXECUTABLE%%-*}  # remove any -* suffixe
           ${EXECUTABLE} --version
         shell: bash
-        
