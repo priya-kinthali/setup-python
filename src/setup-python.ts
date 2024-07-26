@@ -83,7 +83,7 @@ async function run() {
       os.homedir(),
       'hostedtoolcache'
     );
-    console.log(
+    core.info(
       `The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`
     );
   }
