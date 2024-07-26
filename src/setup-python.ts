@@ -78,7 +78,14 @@ function resolveVersionInput() {
 
 async function run() {
   if (IS_MAC) {
-    process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
+    // process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
+    process.env['AGENT_TOOLSDIRECTORY'] = path.join(
+      os.homedir(),
+      'hostedtoolcache'
+    );
+    console.log(
+      `The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`
+    );
   }
 
   if (process.env.AGENT_TOOLSDIRECTORY?.trim()) {
