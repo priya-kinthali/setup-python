@@ -4,6 +4,7 @@ import * as finderPyPy from './find-pypy';
 import * as finderGraalPy from './find-graalpy';
 import * as path from 'path';
 import * as os from 'os';
+import * as semver from 'semver';
 import fs from 'fs';
 import {getCacheDistributor} from './cache-distributions/cache-factory';
 import {
@@ -79,10 +80,20 @@ function resolveVersionInput() {
 async function run() {
   if (IS_MAC) {
     // process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
-    process.env['AGENT_TOOLSDIRECTORY'] = path.join(
-      os.homedir(),
-      'hostedtoolcache'
-    );
+    // process.env['AGENT_TOOLSDIRECTORY'] = path.join(
+    //   os.homedir(),
+    //   'hostedtoolcache'
+    // );
+    const pythonVersion = core.getInput('python-version');
+    core.info(`The python version is: ${pythonVersion}`);
+    if (semver.lt(pythonVersion, '3.11.0')) {
+      process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
+    } else {
+      process.env['AGENT_TOOLSDIRECTORY'] = path.join(
+        os.homedir(),
+        'hostedtoolcache'
+      );
+    }
     core.info(
       `The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`
     );
