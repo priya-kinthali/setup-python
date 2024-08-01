@@ -91768,7 +91768,6 @@ const finderPyPy = __importStar(__nccwpck_require__(4003));
 const finderGraalPy = __importStar(__nccwpck_require__(8040));
 const path = __importStar(__nccwpck_require__(1017));
 const os = __importStar(__nccwpck_require__(2037));
-const semver = __importStar(__nccwpck_require__(1383));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
 const cache_factory_1 = __nccwpck_require__(7549);
 const utils_1 = __nccwpck_require__(1314);
@@ -91826,19 +91825,22 @@ function run() {
         var _a;
         if (utils_1.IS_MAC) {
             // process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
-            // process.env['AGENT_TOOLSDIRECTORY'] = path.join(
-            //   os.homedir(),
-            //   'hostedtoolcache'
-            // );
-            const pythonVersion = core.getInput('python-version');
-            core.info(`The python version is: ${pythonVersion}`);
-            if (semver.lt(pythonVersion, '3.11.0')) {
-                process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
-            }
-            else {
-                process.env['AGENT_TOOLSDIRECTORY'] = path.join(os.homedir(), 'hostedtoolcache');
-            }
+            core.info(`The value of os.homedir is: ${os.homedir()}`);
+            process.env['AGENT_TOOLSDIRECTORY'] = path.join(os.homedir(), 'hostedtoolcache');
             core.info(`The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`);
+            // const pythonVersion = core.getInput('python-version');
+            // core.info(`The python version is: ${pythonVersion}`);
+            // if (semver.lt(pythonVersion, '3.11.0')) {
+            //   process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
+            // } else {
+            //   process.env['AGENT_TOOLSDIRECTORY'] = path.join(
+            //     os.homedir(),
+            //     'hostedtoolcache'
+            //   );
+            // }
+            // core.info(
+            //   `The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`
+            // );
         }
         if ((_a = process.env.AGENT_TOOLSDIRECTORY) === null || _a === void 0 ? void 0 : _a.trim()) {
             process.env['RUNNER_TOOL_CACHE'] = process.env['AGENT_TOOLSDIRECTORY'];
