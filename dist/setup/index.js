@@ -91824,23 +91824,13 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
         if (utils_1.IS_MAC) {
-            // process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
-            core.info(`The value of os.homedir is: ${os.homedir()}`);
-            process.env['AGENT_TOOLSDIRECTORY'] = path.join(os.homedir(), 'hostedtoolcache');
-            core.info(`The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`);
-            // const pythonVersion = core.getInput('python-version');
-            // core.info(`The python version is: ${pythonVersion}`);
-            // if (semver.lt(pythonVersion, '3.11.0')) {
-            //   process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
-            // } else {
-            //   process.env['AGENT_TOOLSDIRECTORY'] = path.join(
-            //     os.homedir(),
-            //     'hostedtoolcache'
-            //   );
-            // }
-            // core.info(
-            //   `The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`
+            process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
+            // core.info(`The value of os.homedir is: ${os.homedir()}`);
+            // process.env['AGENT_TOOLSDIRECTORY'] = path.join(
+            //   os.homedir(),
+            //   'hostedtoolcache'
             // );
+            core.info(`The value of AGENT_TOOLSDIRECTORY is: ${process.env['AGENT_TOOLSDIRECTORY']}`);
         }
         if ((_a = process.env.AGENT_TOOLSDIRECTORY) === null || _a === void 0 ? void 0 : _a.trim()) {
             process.env['RUNNER_TOOL_CACHE'] = process.env['AGENT_TOOLSDIRECTORY'];
