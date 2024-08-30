@@ -92118,8 +92118,10 @@ function extractValue(obj, keys) {
  */
 function getVersionInputFromTomlFile(versionFile) {
     core.debug(`Trying to resolve version form ${versionFile}`);
-    const pyprojectFile = fs_1.default.readFileSync(versionFile, 'utf8');
+    let pyprojectFile = fs_1.default.readFileSync(versionFile, 'utf8');
     core.info(`Original pyprojectFile: ${pyprojectFile}`);
+    // Normalize the line endings in the pyprojectFile
+    pyprojectFile = pyprojectFile.replace(/\r\n/g, '\n');
     const pyprojectConfig = toml.parse(pyprojectFile);
     core.info(`Parsed pyprojectConfig is: ${JSON.stringify(pyprojectConfig)}`);
     let keys = [];
