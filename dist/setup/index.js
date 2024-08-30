@@ -92103,13 +92103,18 @@ function extractValue(obj, keys) {
 function getVersionInputFromTomlFile(versionFile) {
     core.debug(`Trying to resolve version form ${versionFile}`);
     let pyprojectFile = fs_1.default.readFileSync(versionFile, 'utf8');
+    core.info(`Original pyprojectFile: ${pyprojectFile}`);
     const pyprojectConfig = toml.parse(pyprojectFile);
-    // Normalize the line endings in the parsed data
-    for (let key in pyprojectConfig) {
-        if (typeof pyprojectConfig[key] === 'string') {
-            pyprojectConfig[key] = pyprojectConfig[key].replace(/\r\n/g, '\n');
-        }
-    }
+    core.info(`Parsed pyprojectConfig: ${JSON.stringify(pyprojectConfig)}`);
+    // // Normalize the line endings in the parsed data
+    // for (let key in pyprojectConfig) {
+    //   if (typeof pyprojectConfig[key] === 'string') {
+    //     pyprojectConfig[key] = (pyprojectConfig[key] as string).replace(
+    //       /\r\n/g,
+    //       '\n'
+    //     );
+    //   }
+    // }
     let keys = [];
     if ('project' in pyprojectConfig) {
         // standard project metadata (PEP 621)
