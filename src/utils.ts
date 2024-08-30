@@ -227,7 +227,7 @@ export function getVersionInputFromTomlFile(versionFile: string): string[] {
   const pyprojectFile = fs.readFileSync(versionFile, 'utf8');
   core.info(`Original pyprojectFile: ${pyprojectFile}`);
   const pyprojectConfig = toml.parse(pyprojectFile);
-  core.info(`Parsed pyprojectConfig: ${JSON.stringify(pyprojectConfig)}`);
+  core.info(`Parsed pyprojectConfig is: ${JSON.stringify(pyprojectConfig)}`);
 
   let keys = [];
 
