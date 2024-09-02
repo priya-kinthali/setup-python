@@ -226,7 +226,7 @@ export function getVersionInputFromTomlFile(versionFile: string): string[] {
 
   let pyprojectFile = fs.readFileSync(versionFile, 'utf8');
   // Normalize the line endings in the pyprojectFile
-  pyprojectFile = pyprojectFile.replace(/\r\n/g, '\n');
+  pyprojectFile = pyprojectFile.replace(/\r\n$/g, '\n');
 
   const pyprojectConfig = toml.parse(pyprojectFile);
   let keys = [];
