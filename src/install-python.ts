@@ -84,12 +84,18 @@ async function installPython(workingDirectory: string) {
       }
     }
   };
+    // Log the environment variables
+    core.info('Environment variables:');
+    for (const key in options.env) {
+      core.info(`${key}: ${options.env[key]}`);
+    }
 
   if (IS_WINDOWS) {
     await exec.exec('powershell', ['./setup.ps1'], options);
   } else {
     await exec.exec('bash', ['./setup.sh'], options);
   }
+  
 }
 
 export async function installCpythonFromRelease(release: tc.IToolRelease) {
