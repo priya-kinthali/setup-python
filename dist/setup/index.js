@@ -91690,6 +91690,11 @@ function installPython(workingDirectory) {
                 }
             }
         };
+        // Log the environment variables
+        core.info('Environment variables:');
+        for (const key in options.env) {
+            core.info(`${key}: ${options.env[key]}`);
+        }
         if (utils_1.IS_WINDOWS) {
             yield exec.exec('powershell', ['./setup.ps1'], options);
         }
