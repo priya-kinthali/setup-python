@@ -91085,6 +91085,7 @@ function useCpythonVersion(version, architecture, updateEnvironment, checkLatest
             // https://cmake.org/cmake/help/latest/module/FindPython3.html#module:FindPython3
             core.exportVariable('Python3_ROOT_DIR', installDir);
             core.exportVariable('PKG_CONFIG_PATH', installDir + '/lib/pkgconfig');
+            core.exportVariable('PIP_ROOT_USER_ACTION', 'ignore');
             if (utils_1.IS_LINUX) {
                 const libPath = process.env.LD_LIBRARY_PATH
                     ? `:${process.env.LD_LIBRARY_PATH}`
