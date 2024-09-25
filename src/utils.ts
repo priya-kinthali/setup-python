@@ -266,8 +266,20 @@ export function getVersionInputFromTomlFile(versionFile: string): string[] {
  * Python version extracted from a plain text file.
  */
 export function getVersionInputFromPlainFile(versionFile: string): string[] {
-  core.debug(`Trying to resolve version form ${versionFile}`);
-  const version = fs.readFileSync(versionFile, 'utf8').trim();
+  core.debug(`Trying to resolve version from ${versionFile}`);
+  const content = fs.readFileSync(versionFile, 'utf8');
+  const lines = content.split('\n');
+  let version = '';
+  for (const line of lines) {
+    // Ignore lines starting with #
+    if (!line.trim().startsWith('#')) {
+      version = line.trim();
+      break;
+    }
+  }
+  if (!version) {
+    throw new Error(`No version found in ${versionFile}`);
+  }
   core.info(`Resolved ${versionFile} as ${version}`);
   return [version];
 }

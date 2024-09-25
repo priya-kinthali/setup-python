@@ -104,6 +104,17 @@ describe('Version from file test', () => {
       expect(_fn(pythonVersionFilePath)).toEqual([pythonVersionFileContent]);
     }
   );
+  it.each([getVersionInputFromPlainFile, getVersionInputFromFile])(
+    'Version from plain file with comment test',
+    async _fn => {
+      await io.mkdirP(tempDir);
+      const pythonVersionFileName = 'python-version.file';
+      const pythonVersionFilePath = path.join(tempDir, pythonVersionFileName);
+      const pythonVersionFileContent = '# This is a comment\n3.7';
+      fs.writeFileSync(pythonVersionFilePath, pythonVersionFileContent);
+      expect(_fn(pythonVersionFilePath)).toEqual(['3.7']);
+    }
+  );
   it.each([getVersionInputFromTomlFile, getVersionInputFromFile])(
     'Version from standard pyproject.toml test',
     async _fn => {

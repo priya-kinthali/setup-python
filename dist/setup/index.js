@@ -92153,8 +92153,20 @@ exports.getVersionInputFromTomlFile = getVersionInputFromTomlFile;
  * Python version extracted from a plain text file.
  */
 function getVersionInputFromPlainFile(versionFile) {
-    core.debug(`Trying to resolve version form ${versionFile}`);
-    const version = fs_1.default.readFileSync(versionFile, 'utf8').trim();
+    core.debug(`Trying to resolve version from ${versionFile}`);
+    const content = fs_1.default.readFileSync(versionFile, 'utf8');
+    const lines = content.split('\n');
+    let version = '';
+    for (const line of lines) {
+        // Ignore lines starting with #
+        if (!line.trim().startsWith('#')) {
+            version = line.trim();
+            break;
+        }
+    }
+    if (!version) {
+        throw new Error(`No version found in ${versionFile}`);
+    }
     core.info(`Resolved ${versionFile} as ${version}`);
     return [version];
 }
