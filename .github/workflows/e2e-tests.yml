@@ -16,6 +16,7 @@ jobs:
     name: Test setup-python
     runs-on: ${{ matrix.operating-system }}
     strategy:
+      fail-fast: false
       matrix:
         operating-system: [ubuntu-24.04,ubuntu-22.04,macos-latest, windows-latest, macos-13]
     steps:
