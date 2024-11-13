@@ -93,6 +93,8 @@ export async function findPyPyVersion(
     // https://cmake.org/cmake/help/latest/module/FindPython3.html#module:FindPython3
     core.exportVariable('Python3_ROOT_DIR', installDir);
     core.exportVariable('PKG_CONFIG_PATH', pythonLocation + '/lib/pkgconfig');
+    core.exportVariable('PIPX_DEFAULT_PYTHON', pythonLocation + '/bin/python'); // Added line
+
     core.addPath(pythonLocation);
     core.addPath(_binDir);
   }

@@ -119,6 +119,7 @@ export async function useCpythonVersion(
     // https://cmake.org/cmake/help/latest/module/FindPython3.html#module:FindPython3
     core.exportVariable('Python3_ROOT_DIR', installDir);
     core.exportVariable('PKG_CONFIG_PATH', installDir + '/lib/pkgconfig');
+    core.exportVariable('PIPX_DEFAULT_PYTHON', installDir + '/bin/python'); // Added line
 
     if (IS_LINUX) {
       const libPath = process.env.LD_LIBRARY_PATH
