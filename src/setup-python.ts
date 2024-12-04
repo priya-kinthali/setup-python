@@ -78,7 +78,7 @@ function resolveVersionInput() {
 
 async function run() {
   if (IS_MAC) {
-    process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache';
+    process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache/Users/lakshmipriya/actions-runner/_work/_tool';
   }
 
   if (process.env.AGENT_TOOLSDIRECTORY?.trim()) {
