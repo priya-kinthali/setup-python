@@ -91843,7 +91843,7 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
         if (utils_1.IS_MAC) {
-            process.env['AGENT_TOOLSDIRECTORY'] = '/Users/runner/hostedtoolcache/Users/lakshmipriya/actions-runner/_work/_tool';
+            process.env['AGENT_TOOLSDIRECTORY'] = '/Users/lakshmipriya/actions-runner/_work/_tool';
         }
         if ((_a = process.env.AGENT_TOOLSDIRECTORY) === null || _a === void 0 ? void 0 : _a.trim()) {
             process.env['RUNNER_TOOL_CACHE'] = process.env['AGENT_TOOLSDIRECTORY'];
