@@ -98870,6 +98870,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.useCpythonVersion = useCpythonVersion;
+exports.desugarVersion = desugarVersion;
 exports.pythonVersionToSemantic = pythonVersionToSemantic;
 const os = __importStar(__nccwpck_require__(857));
 const path = __importStar(__nccwpck_require__(6928));
@@ -98902,9 +98903,14 @@ function useCpythonVersion(version, architecture, updateEnvironment, checkLatest
     return __awaiter(this, void 0, void 0, function* () {
         var _a;
         let manifest = null;
-        const desugaredVersionSpec = desugarDevVersion(version);
+        const [desugaredVersionSpec, freethreaded] = desugarVersion(version);
         let semanticVersionSpec = pythonVersionToSemantic(desugaredVersionSpec, allowPreReleases);
         core.debug(`Semantic version spec of ${version} is ${semanticVersionSpec}`);
+        if (freethreaded) {
+            // Free threaded versions use an architecture suffix like `x64-freethreaded`
+            core.debug(`Using freethreaded version of ${semanticVersionSpec}`);
+            architecture += freethreaded;
+        }
         if (checkLatest) {
             manifest = yield installer.getManifest();
             const resolvedVersion = (_a = (yield installer.findReleaseFromManifest(semanticVersionSpec, architecture, manifest))) === null || _a === void 0 ? void 0 : _a.version;
@@ -98977,6 +98983,29 @@ function useCpythonVersion(version, architecture, updateEnvironment, checkLatest
         core.setOutput('python-path', pythonPath);
         return { impl: 'CPython', version: installed };
     });
+}
+/* Desugar free threaded and dev versions */
+function desugarVersion(versionSpec) {
+    const [desugaredVersionSpec, freethreaded] = desugarFreeThreadedVersion(versionSpec);
+    const desugaredVersionSpec2 = desugarDevVersion(desugaredVersionSpec);
+    return [desugaredVersionSpec2, freethreaded];
+}
+/* Identify freethreaded versions like, 3.13t, 3.13.1t, 3.13t-dev, 3.14.0a1t.
+ * Returns the version without the `t` and the architectures suffix, if freethreaded */
+function desugarFreeThreadedVersion(versionSpec) {
+    const prereleaseVersion = /(\d+\.\d+\.\d+)(t)((?:a|b|rc)\d*)/g;
+    if (prereleaseVersion.test(versionSpec)) {
+        return [versionSpec.replace(prereleaseVersion, '$1$3'), '-freethreaded'];
+    }
+    const majorMinor = /^(\d+\.\d+(\.\d+)?)(t)$/;
+    if (majorMinor.test(versionSpec)) {
+        return [versionSpec.replace(majorMinor, '$1'), '-freethreaded'];
+    }
+    const devVersion = /^(\d+\.\d+)(t)(-dev)$/;
+    if (devVersion.test(versionSpec)) {
+        return [versionSpec.replace(devVersion, '$1$3'), '-freethreaded'];
+    }
+    return [versionSpec, ''];
 }
 /** Convert versions like `3.8-dev` to a version like `~3.8.0-0`. */
 function desugarDevVersion(versionSpec) {
@@ -99524,7 +99553,7 @@ const httpm = __importStar(__nccwpck_require__(4844));
 const utils_1 = __nccwpck_require__(1798);
 const TOKEN = core.getInput('token');
 const AUTH = !TOKEN ? undefined : `token ${TOKEN}`;
-const MANIFEST_REPO_OWNER = 'actions';
+const MANIFEST_REPO_OWNER = 'priyagupta108';
 const MANIFEST_REPO_NAME = 'python-versions';
 const MANIFEST_REPO_BRANCH = 'main';
 exports.MANIFEST_URL = `https://raw.githubusercontent.com/${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}/${MANIFEST_REPO_BRANCH}/versions-manifest.json`;
