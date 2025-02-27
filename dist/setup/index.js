@@ -99547,6 +99547,8 @@ function findReleaseFromManifest(semanticVersionSpec, architecture, manifest) {
 function getManifest() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            const result = yield getManifestFromRepo();
+            console.log(result);
             return yield getManifestFromRepo();
         }
         catch (err) {

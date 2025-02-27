@@ -36,6 +36,8 @@ export async function findReleaseFromManifest(
 
 export async function getManifest(): Promise<tc.IToolRelease[]> {
   try {
+    const result = await getManifestFromRepo();
+    console.log(result);
     return await getManifestFromRepo();
   } catch (err) {
     core.debug('Fetching the manifest via the API failed.');
