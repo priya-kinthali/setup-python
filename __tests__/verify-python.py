@@ -1,28 +1,23 @@
 import sys
-import re
-
-def normalize_version(version):
-    return re.sub(r'[^0-9.]+', '', version)
-
 argCount = len(sys.argv) - 1
 
 if argCount == 1:
-    expectedVersion = normalize_version(sys.argv[1])
+    expectedVersion = sys.argv[1]
     versions = len(expectedVersion.split("."))
     majorMinor = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
 
     if versions == 2:
         # Test only major and minor version
+        if expectedVersion.endswith('t'):
+            majorMinor += 't'
         if expectedVersion != majorMinor:
-            print("Expected: " + expectedVersion)
-            print("Actual: " + majorMinor)
             raise Exception("Incorrect major + minor version detected\nExpected: " + expectedVersion + "\nActual: " + majorMinor)
     elif versions == 3:
         # Test major, minor and micro version
         majorMinorMicro = majorMinor + '.' + str(sys.version_info[2])
+        if expectedVersion.endswith('t'):
+            majorMinorMicro += 't'
         if expectedVersion != majorMinorMicro:
-            print("Expected: " + expectedVersion)
-            print("Actual: " + majorMinorMicro)
             raise Exception("Incorrect major + minor + micro version detected\nExpected: " + expectedVersion + "\nActual: " + majorMinorMicro)
     else: 
         raise Exception("Incorrect number of arguments supplied")
