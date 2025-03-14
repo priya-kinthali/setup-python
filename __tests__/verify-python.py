@@ -1,4 +1,5 @@
 import sys
+
 argCount = len(sys.argv) - 1
 
 if argCount == 1:
@@ -10,6 +11,7 @@ if argCount == 1:
     isFreethreaded = expectedVersion.endswith('t')
     if isFreethreaded:
         expectedVersion = expectedVersion[:-1]  # Remove the 't' suffix for comparison
+
     if versions == 2:
         # Test only major and minor version
         if expectedVersion != majorMinor:
@@ -21,9 +23,7 @@ if argCount == 1:
             raise Exception("Incorrect major + minor + micro version detected\nExpected: " + expectedVersion + "\nActual: " + majorMinorMicro)
     else: 
         raise Exception("Incorrect number of arguments supplied")
-    if isFreethreaded:
-        print("Correct freethreaded version of Python " + expectedVersion + "t detected")
-    else:
-        print("Correct version of Python " + expectedVersion + " detected")
+    
+    print("Correct version of Python " + expectedVersion + " detected")
 else:
     raise Exception("Incorrect number of arguments supplied")
