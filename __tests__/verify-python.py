@@ -24,6 +24,7 @@ if argCount == 1:
     else: 
         raise Exception("Incorrect number of arguments supplied")
     
-    print("Correct version of Python " + expectedVersion + " detected")
+    detectedVersion = majorMinorMicro + ('t' if isFreethreaded else '')
+    print("Correct version of Python " + detectedVersion + " detected")
 else:
     raise Exception("Incorrect number of arguments supplied")
