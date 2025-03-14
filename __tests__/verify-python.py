@@ -23,5 +23,8 @@ if argCount == 1:
     else: 
         raise Exception("Incorrect number of arguments supplied")
     print("Correct version of Python " + expectedVersion + " detected")
+    print("expectedVersion: " +  expectedVersion + " is ")
+    print("versions: " +  versions + " is ")
+    print("majorMinor: " + majorMinor + "is ")
 else:
     raise Exception("Incorrect number of arguments supplied")
