@@ -1,11 +1,14 @@
 import sys
 argCount = len(sys.argv) - 1
+print(f"argCount: {argCount}")
 
 if argCount == 1:
-    inputVersion = sys.argv[1]
-    expectedVersion = inputVersion.rstrip('t') if inputVersion.endswith('t') else inputVersion
+    expectedVersion = sys.argv[1]
+    print(f"expectedVersion: {expectedVersion}")
     versions = len(expectedVersion.split("."))
+    print(f"versions: {versions}")
     majorMinor = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
+    print(f"majorMinor: {majorMinor}")
 
     if versions == 2:
         # Test only major and minor version
@@ -14,6 +17,7 @@ if argCount == 1:
     elif versions == 3:
         # Test major, minor and micro version
         majorMinorMicro = majorMinor + '.' + str(sys.version_info[2])
+        print(f"majorMinorMicro: {majorMinorMicro}")
         if expectedVersion != majorMinorMicro:
             raise Exception("Incorrect major + minor + micro version detected\nExpected: " + expectedVersion + "\nActual: " + majorMinorMicro)
     else: 
