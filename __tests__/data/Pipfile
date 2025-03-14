@@ -7,6 +7,8 @@ name = "pypi"
 flake8 = "==6.0.0"
 numpy = "==1.25.1"
 distlib = "*"
+setuptools = "*"
+wheel = "*"
 
 [dev-packages]
 
