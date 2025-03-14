@@ -3,6 +3,7 @@ argCount = len(sys.argv) - 1
 
 if argCount == 1:
     expectedVersion = sys.argv[1]
+     print("Expected Version:", expectedVersion)
     versions = len(expectedVersion.split("."))
     majorMinor = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
 
