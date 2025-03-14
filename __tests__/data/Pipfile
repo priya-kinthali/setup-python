@@ -4,9 +4,6 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-flake8 = ">=6.0.0"
-pyinstaller = ">=6.11.0"
-numpy = "==1.25.1"
 
 [dev-packages]
 
