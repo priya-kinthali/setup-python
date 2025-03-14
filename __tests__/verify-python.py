@@ -1,16 +1,15 @@
 import sys
+import re
+
+def normalize_version(version):
+    return re.sub(r'[^0-9.]+', '', version)
 
 argCount = len(sys.argv) - 1
 
 if argCount == 1:
-    expectedVersion = sys.argv[1]
+    expectedVersion = normalize_version(sys.argv[1])
     versions = len(expectedVersion.split("."))
     majorMinor = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
-
-    # Check if the expected version has a 't' suffix
-    isFreethreaded = expectedVersion.endswith('t')
-    if isFreethreaded:
-        expectedVersion = expectedVersion[:-1]  # Remove the 't' suffix for comparison
 
     if versions == 2:
         # Test only major and minor version
@@ -23,11 +22,6 @@ if argCount == 1:
             raise Exception("Incorrect major + minor + micro version detected\nExpected: " + expectedVersion + "\nActual: " + majorMinorMicro)
     else: 
         raise Exception("Incorrect number of arguments supplied")
-    
-    detectedVersion = majorMinorMicro + ('t' if isFreethreaded else '')
-    if isFreethreaded:
-        expectedVersion += 't'  # Add the 't' suffix back for the final output comparison
-
-    print("Correct version of Python " + detectedVersion + " detected")
+    print("Correct version of Python " + expectedVersion + " detected")
 else:
     raise Exception("Incorrect number of arguments supplied")
