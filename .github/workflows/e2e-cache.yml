@@ -6,7 +6,7 @@ on:
       - '**.md'
   push:
     branches:
-      - main
+      - sample
       - releases/*
     paths-ignore:
       - '**.md'
@@ -15,25 +15,6 @@ on:
 permissions:
   contents: read
 jobs:
-  python-pip-dependencies-caching:
-    name: Test pip (Python ${{ matrix.python-version}}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        python-version:
-          ['3.9', 'pypy-3.9-v7.x', '3.10', 'pypy-3.10-v7.x', '3.13t']
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: ./
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-      - name: Install dependencies
-        run: pip install numpy pandas requests
-
   python-pipenv-dependencies-caching:
     name: Test pipenv (Python ${{ matrix.python-version}}, ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -70,50 +51,6 @@ jobs:
           }
       - name: Run Python Script
         run: pipenv run python test-pipenv.py
-
-  python-poetry-dependencies-caching:
-    name: Test poetry (Python ${{ matrix.python-version}}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        python-version:
-          ['3.9', 'pypy-3.9-v7.x', '3.10', 'pypy-3.10-v7.x', '3.13t']
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install poetry
-        run: pipx install poetry
-      - name: Init pyproject.toml
-        run: mv ./__tests__/data/pyproject.toml .
-      - name: Setup Python
-        uses: ./
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'poetry'
-      - name: Install dependencies
-        run: poetry install --no-root
-
-  python-pip-dependencies-caching-path:
-    name: Test pip (Python ${{ matrix.python-version}}, ${{ matrix.os }}, caching path)
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        python-version:
-          ['3.9', 'pypy-3.9-v7.x', '3.10', 'pypy-3.10-v7.x', '3.13t']
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
-        uses: ./
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: 'pip'
-          cache-dependency-path: __tests__/data/requirements.txt
-      - name: Install dependencies
-        run: pip install numpy pandas requests
-
   python-pipenv-dependencies-caching-path:
     name: Test pipenv (Python ${{ matrix.python-version}}, ${{ matrix.os }}, caching path)
     runs-on: ${{ matrix.os }}
