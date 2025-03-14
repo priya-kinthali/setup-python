@@ -65,6 +65,13 @@ jobs:
       - name: Verify 3.13.0
         run: python __tests__/verify-python.py 3.13.0
 
+      - name: Run with setup-python 3.13.2t
+        uses: ./
+        with:
+          python-version: 3.13.2t
+      - name: Verify 3.13.2t
+        run: python __tests__/verify-python.py 3.13.2t
+
       - name: Run with setup-python 3.13
         id: cp313
         uses: ./
