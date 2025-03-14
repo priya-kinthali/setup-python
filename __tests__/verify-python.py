@@ -2,9 +2,8 @@ import sys
 argCount = len(sys.argv) - 1
 
 if argCount == 1:
-    expectedVersion = sys.argv[1]
-    if expectedVersion.endswith('t'):
-        expectedVersion = expectedVersion.rstrip('t')
+    inputVersion = sys.argv[1]
+    expectedVersion = inputVersion.rstrip('t') if inputVersion.endswith('t') else inputVersion
     versions = len(expectedVersion.split("."))
     majorMinor = str(sys.version_info[0]) + '.' + str(sys.version_info[1])
 
