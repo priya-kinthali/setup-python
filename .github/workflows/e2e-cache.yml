@@ -23,7 +23,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
         python-version:
-          ['3.13.2t', '3.13.2']
+          ['3.11.1' ]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python
