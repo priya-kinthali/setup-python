@@ -5,8 +5,8 @@ name = "pypi"
 
 [packages]
 setuptools = ">=58.0.0"
-flake8 = ">=6.0.0"
-numpy = ">=2.0.2"
+flake8 = "==6.0.0"
+numpy = "==1.25.1"
 
 [dev-packages]
 
