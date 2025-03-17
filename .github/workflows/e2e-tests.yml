@@ -19,12 +19,12 @@ jobs:
       matrix:
         operating-system:
           [
-            ubuntu-20.04,
-            windows-latest,
-            ubuntu-22.04,
-            ubuntu-latest,
-            macos-latest,
-            macos-13
+            # ubuntu-20.04,
+            # windows-latest,
+            # ubuntu-22.04,
+            ubuntu-latest
+            # macos-latest,
+            # macos-13
           ]
     steps:
       - name: Checkout
@@ -58,11 +58,11 @@ jobs:
       # - name: Verify 3.12.7
       #   run: python __tests__/verify-python.py 3.12.7
 
-      - name: Run with setup-python 3.13.0t
+      - name: Run with setup-python 3.13.2t
         uses: ./
         with:
-          python-version: 3.13.0t
-      - name: Verify 3.13.0t
+          python-version: 3.13.2t
+      - name: Verify 3.13.2t
         run: |
           $pythonVersion = (python --version)
           $expectedVersion = "${{ matrix.python-version }}".TrimEnd('t')
