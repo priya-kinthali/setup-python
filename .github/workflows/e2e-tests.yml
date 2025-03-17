@@ -68,7 +68,7 @@ jobs:
           echo $pythonVersion
         #   $expectedVersion = $pythonVersion.TrimEnd('t')
         #   python __tests__/verify-python.py $expectedVersion
-        shell: bash
+        shell: pwsh
 
       # - name: Run with setup-python 3.13.0
       #   uses: ./
