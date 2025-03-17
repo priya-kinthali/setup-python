@@ -65,7 +65,7 @@ jobs:
       - name: Verify 3.13.2t
         run: |
           $pythonVersion = (python --version)
-          $expectedVersion = "${{ matrix.python-version }}".TrimEnd('t')
+          $expectedVersion = $pythonVersion.TrimEnd('t')
           python __tests__/verify-python.py $expectedVersion
 
       # - name: Run with setup-python 3.13.0
