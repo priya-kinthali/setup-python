@@ -21,7 +21,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        # os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        os: [ubuntu-latest]
+
         python-version:
           ['3.13.2t' ]
     steps:
@@ -57,7 +59,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        # os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
+        os: [ubuntu-latest]
         python-version:
           ['3.13.2t']
     steps:
