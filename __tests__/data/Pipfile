@@ -4,9 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-setuptools = ">=58.0.0"
 flake8 = "==6.0.0"
-numpy = ">=2.0.0"
+numpy = ">=1.26.3"
 
 [dev-packages]
 
