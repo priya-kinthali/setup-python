@@ -51,7 +51,7 @@ jobs:
           cache: 'pipenv'
       - name: Install pipenv
         run: curl https://raw.githubusercontent.com/pypa/pipenv/master/get-pipenv.py | python
-      - name: Install dependencies    
+      - name: Install dependencies
         run: pipenv install requests
 
   python-poetry-dependencies-caching:

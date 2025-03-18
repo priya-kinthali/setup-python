@@ -1,9 +1,9 @@
-name: Validate Python freethread e2e 
+name: Validate Python freethread e2e
 
 on:
   push:
     branches:
-      - main
+      - test-e2e
     paths-ignore:
       - '**.md'
   pull_request:
