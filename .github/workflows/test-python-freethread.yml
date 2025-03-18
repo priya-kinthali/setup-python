@@ -3,7 +3,7 @@ name: Validate Python freethread e2e
 on:
   push:
     branches:
-      - test-e2e
+      - main
     paths-ignore:
       - '**.md'
   pull_request:
@@ -418,7 +418,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        python-version: [3.13.0t, 3.13.1t, 3.13.2t]
+        python-version: [3.13t]
     steps:
       - uses: actions/checkout@v4
       - name: Setup Python and check latest
@@ -450,13 +450,12 @@ jobs:
         with:
           python-version: |
             3.13t
-            3.14t
           check-latest: true
       - name: Validate version
         run: |
           $pythonVersion = (python --version)
-          if ("$pythonVersion" -NotMatch "3.14"){
-            Write-Host "The current version is $pythonVersion; expected version is 3.14"
+          if ("$pythonVersion" -NotMatch "3.13"){
+            Write-Host "The current version is $pythonVersion; expected version is 3.13"
             exit 1
           }
           $pythonVersion
