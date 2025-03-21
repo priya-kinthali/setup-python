@@ -6,7 +6,7 @@ on:
       - '**.md'
   push:
     branches:
-      - test-e2e
+      - main
       - releases/*
     paths-ignore:
       - '**.md'
@@ -57,6 +57,8 @@ jobs:
           ['3.10', 'pypy-3.10-v7.x', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13']
         exclude:
           - os: windows-latest
+            python-version: pypy-3.11-v7.x
+          - os: ubuntu-22.04
             python-version: pypy-3.11-v7.x
     steps:
       - uses: actions/checkout@v4
@@ -161,6 +163,8 @@ jobs:
           ['3.10', 'pypy-3.10-v7.x', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13']
         exclude:
           - os: windows-latest
+            python-version: pypy-3.11-v7.x
+          - os: ubuntu-22.04
             python-version: pypy-3.11-v7.x
     steps:
       - uses: actions/checkout@v4

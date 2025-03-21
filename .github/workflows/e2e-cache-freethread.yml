@@ -6,7 +6,7 @@ on:
       - '**.md'
   push:
     branches:
-      - test-e2e
+      - main
       - releases/*
     paths-ignore:
       - '**.md'
