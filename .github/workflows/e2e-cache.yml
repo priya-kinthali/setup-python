@@ -6,7 +6,7 @@ on:
       - '**.md'
   push:
     branches:
-      - main
+      - samplev4
       - releases/*
     paths-ignore:
       - '**.md'
@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
         python-version: ['3.9', 'pypy-3.7-v7.x']
     steps:
       - uses: actions/checkout@v4
@@ -96,7 +96,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
         python-version: ['3.9', 'pypy-3.7-v7.x']
     steps:
       - uses: actions/checkout@v4
