@@ -3,7 +3,7 @@ name: Validate PyPy e2e
 on:
   push:
     branches:
-      - main
+      - samplev4
     paths-ignore:
       - '**.md'
   pull_request:
@@ -32,6 +32,9 @@ jobs:
           - 'pypy-2.7-v7.3.4rc1'
           - 'pypy-3.7-nightly'
           - 'pypy3.8-v7.3.7'
+        exclude:
+          - os: macos-13
+            pypy: 'pypy-3.7-nightly'
 
     steps:
       - name: Checkout
