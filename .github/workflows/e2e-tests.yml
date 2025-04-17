@@ -45,10 +45,12 @@ jobs:
         run: python __tests__/verify-python.py 3.8
 
       - name: Run with setup-python 3.7.5
+        if: ${{ matrix.operating-system == 'windows-latest' }}
         uses: ./
         with:
           python-version: 3.7.5
       - name: Verify 3.7.5
+        if: ${{ matrix.operating-system == 'windows-latest' }}
         run: python __tests__/verify-python.py 3.7.5
 
       - name: Run with setup-python 3.6.7
