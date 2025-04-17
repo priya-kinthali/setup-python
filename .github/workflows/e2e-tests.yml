@@ -16,7 +16,8 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-20.04, windows-latest]
+        operating-system: [ubuntu-22.04, windows-latest]
+      fail-fast: false
     steps:
       - name: Checkout
         uses: actions/checkout@v4
