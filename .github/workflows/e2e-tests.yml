@@ -3,7 +3,7 @@ name: e2e tests
 on:
   push:
     branches:
-      - main
+      - samplev4
     paths-ignore:
       - '**.md'
   pull_request:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-20.04, windows-latest]
+        operating-system: [ubuntu-22.04, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
