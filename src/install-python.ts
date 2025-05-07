@@ -12,7 +12,7 @@ const AUTH = !TOKEN ? undefined : `token ${TOKEN}`;
 const MANIFEST_REPO_OWNER = 'priya-kinthali';
 const MANIFEST_REPO_NAME = 'python-versions';
 // const MANIFEST_REPO_BRANCH = 'update-versions-manifest-file';
-const MANIFEST_REPO_BRANCH ='create-symlink-windows';
+const MANIFEST_REPO_BRANCH ='test-1079';
 export const MANIFEST_URL = `https://raw.githubusercontent.com/${MANIFEST_REPO_OWNER}/${MANIFEST_REPO_NAME}/${MANIFEST_REPO_BRANCH}/versions-manifest.json`;
 
 export async function findReleaseFromManifest(
