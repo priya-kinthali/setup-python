@@ -3,7 +3,7 @@ name: Licensed
 on:
   push:
     branches:
-      - main
+      - sample-787
   pull_request:
     branches:
       - main

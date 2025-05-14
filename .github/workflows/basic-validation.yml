@@ -3,7 +3,7 @@ name: Basic validation
 on:
   push:
     branches:
-      - main
+      - sample-787
     paths-ignore:
       - '**.md'
   pull_request:
