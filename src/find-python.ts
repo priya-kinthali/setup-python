@@ -47,7 +47,7 @@ export async function useCpythonVersion(
   );
   if (architecture.endsWith('-freethreaded')) {
     throw new Error(
-        `Invalid input '${architecture}'. For freethreaded Python, set the \`freethreaded\` input to \`true\` or use the **t** suffix in some cases. See Advanced usage for examples and documentation.`
+        `Invalid architecture input '${architecture}'. For freethreaded Python, set the \`freethreaded\` input to \`true\` or use the **t** suffix in some cases. See Advanced usage for examples and documentation.`
     );
 }
   if (versionFreethreaded) {
