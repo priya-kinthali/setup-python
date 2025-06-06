@@ -96095,7 +96095,7 @@ function useCpythonVersion(version, architecture, updateEnvironment, checkLatest
         const { version: desugaredVersionSpec, freethreaded: versionFreethreaded } = desugarVersion(version);
         let semanticVersionSpec = pythonVersionToSemantic(desugaredVersionSpec, allowPreReleases);
         if (architecture.endsWith('-freethreaded')) {
-            throw new Error(`"${architecture}" is not a standard architecture. To download the freethreaded Python version, set the \`freethreaded\` input to \`true\` or use the special **t** suffix in some cases. See Advanced usage for examples and documentation.`);
+            throw new Error(`Invalid input '${architecture}'. For freethreaded Python, set the \`freethreaded\` input to \`true\` or use the **t** suffix in some cases. See Advanced usage for examples and documentation.`);
         }
         if (versionFreethreaded) {
             // Use the freethreaded version if it was specified in the input, e.g., 3.13t
