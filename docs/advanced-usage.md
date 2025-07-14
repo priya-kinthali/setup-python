@@ -662,4 +662,4 @@ The version of Pip should be specified in the format `major`, `major.minor`, or 
 ```
 > The `pip-version` input is supported only with standard Python versions. It is not available when using PyPy or GraalPy.
 
-> Using a specific or outdated version of pip may result in compatibility or security issues and can cause job failures. Additionally, the `setup-python` action does not handle authentication for pip or git when installing packages from private repositories. For best practices and guidance, refer to the official [pip documentation](https://pip.pypa.io/en/stable/).
+> Using a specific or outdated version of pip may result in compatibility or security issues and can cause job failures. For best practices and guidance, refer to the official [pip documentation](https://pip.pypa.io/en/stable/).
