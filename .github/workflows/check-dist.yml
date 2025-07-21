@@ -3,7 +3,7 @@ name: Check dist/
 on:
   push:
     branches:
-      - main
+      - sample-361
     paths-ignore:
       - '**.md'
   pull_request:
