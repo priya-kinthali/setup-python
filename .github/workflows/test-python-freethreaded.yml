@@ -3,7 +3,7 @@ name: Validate Python e2e freethread
 on:
   push:
     branches:
-      - sample-361
+      - main
     paths-ignore:
       - '**.md'
   pull_request:
