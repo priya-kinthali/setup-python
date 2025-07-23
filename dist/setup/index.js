@@ -96843,7 +96843,7 @@ function cacheDependencies(cache, pythonVersion) {
                     core.info(`File Path: ${filePath}`);
                     const resolvedFilePath = path.resolve(filePath);
                     core.info(`ResolvedFilePath: ${resolvedFilePath}`);
-                    const tempFilePath = path.join(tempDir, path.basename(resolvedFilePath)); // Update tempFilePath
+                    const tempFilePath = path.join(tempDir, path.relative(githubWorkspace, resolvedFilePath)); // Update tempFilePath
                     core.info(`Temporary File Path: ${tempFilePath}`);
                     core.info(`Copying file from ${resolvedFilePath} to ${tempFilePath}`); // Log source and destination paths
                     fs_1.default.copyFileSync(resolvedFilePath, tempFilePath);
