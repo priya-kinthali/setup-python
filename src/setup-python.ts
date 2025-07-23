@@ -53,10 +53,7 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           tempDir,
           path.basename(resolvedFilePath)
         ); // Update tempFilePath
-
-        core.info(`Temporary file path: ${tempFilePath}`);
         fs.copyFileSync(resolvedFilePath, tempFilePath);
-        core.info('File copied to temporary directory.');
         tempFilePaths.push(tempFilePath); // Add to the list of temporary file paths
       });
       // Update cacheDependencyPath to point to the file in the temporary directory
