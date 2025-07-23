@@ -49,11 +49,14 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
 
       // Copy the file into the temporary directory
       filePaths.forEach(filePath => {
+        core.info(`File Path: ${filePath}`);
         const resolvedFilePath = path.resolve(filePath);
+        core.info(`ResolvedFilePath: ${resolvedFilePath}`);
         const tempFilePath = path.join(
           tempDir,
           path.basename(resolvedFilePath)
         ); // Update tempFilePath
+        core.info(`Temporary File Path: ${tempFilePath}`);
         core.info(`Copying file from ${resolvedFilePath} to ${tempFilePath}`); // Log source and destination paths
         fs.copyFileSync(resolvedFilePath, tempFilePath);
         tempFilePaths.push(tempFilePath); // Add to the list of temporary file paths
