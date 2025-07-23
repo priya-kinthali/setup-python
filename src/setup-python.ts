@@ -36,15 +36,25 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
     if (!resolvedPath.startsWith(githubWorkspace)) {
       core.info('Resolved path is outside of GITHUB_WORKSPACE.');
       // Create a temporary directory within the GITHUB_WORKSPACE
+      const filePaths = resolvedPath
+        .split('\n')
+        .map(filePath => filePath.trim());
       const tempDir = fs.mkdtempSync(
         path.join(githubWorkspace, 'setup-python-')
       );
       core.info(`Temporary directory created: ${tempDir}`);
+
+      let tempFilePath = ''; // Declare tempFilePath outside the loop
+
       // Copy the file into the temporary directory
-      const tempFilePath = path.join(tempDir, path.basename(resolvedPath));
-      core.info(`Temporary file path: ${tempFilePath}`);
-      core.info('File copied to temporary directory.');
-      fs.copyFileSync(resolvedPath, tempFilePath);
+      filePaths.forEach(filePath => {
+        const resolvedFilePath = path.resolve(filePath);
+        tempFilePath = path.join(tempDir, path.basename(resolvedFilePath)); // Update tempFilePath
+
+        core.info(`Temporary file path: ${tempFilePath}`);
+        fs.copyFileSync(resolvedFilePath, tempFilePath);
+        core.info('File copied to temporary directory.');
+      });
       // Update cacheDependencyPath to point to the file in the temporary directory
       cacheDependencyPath = tempFilePath;
       core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
