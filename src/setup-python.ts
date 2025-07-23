@@ -29,6 +29,8 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
     core.info(`Initial cacheDependencyPath: ${cacheDependencyPath}`);
     const githubWorkspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
     core.info(`GITHUB_WORKSPACE: ${githubWorkspace}`);
+    const actionPath = process.env.GITHUB_ACTION_PATH || '';
+    core.info(`Action Path: ${actionPath}`);
     // Resolve the absolute path of the input file
     const resolvedPath = path.resolve(cacheDependencyPath);
     core.info(`Resolved absolute path of cacheDependencyPath: ${resolvedPath}`);
@@ -45,24 +47,22 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       );
       core.info(`Temporary directory created: ${tempDir}`);
 
-      let tempFilePaths: string[] = []; // Array to hold paths of copied files
-
-      // Copy the file into the temporary directory
       filePaths.forEach(filePath => {
         core.info(`File Path: ${filePath}`);
         const resolvedFilePath = path.resolve(filePath);
         core.info(`ResolvedFilePath: ${resolvedFilePath}`);
-        const tempFilePath = path.join(
-          tempDir,
-          path.relative(githubWorkspace, resolvedFilePath)
-        ); // Update tempFilePath
-        core.info(`Temporary File Path: ${tempFilePath}`);
-        core.info(`Copying file from ${resolvedFilePath} to ${tempFilePath}`); // Log source and destination paths
-        fs.copyFileSync(resolvedFilePath, tempFilePath);
-        tempFilePaths.push(tempFilePath); // Add to the list of temporary file paths
+
+        // Extract the part of resolvedPath excluding actionPath
+        const relativePath = path.relative(actionPath, resolvedFilePath);
+        core.info(`Relative Path (excluding actionPath): ${relativePath}`);
+
+        // Append the relative path to tempDir
+        const updatedPath = path.join(tempDir, relativePath);
+        core.info(`Updated Path: ${updatedPath}`);
+
+        // Update cacheDependencyPath with the new values
+        cacheDependencyPath = updatedPath;
       });
-      // Update cacheDependencyPath to point to the file in the temporary directory
-      cacheDependencyPath = tempFilePaths.join('\n');
       core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
     }
   }
