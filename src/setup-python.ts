@@ -39,12 +39,13 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       const filePaths = resolvedPath
         .split('\n')
         .map(filePath => filePath.trim());
+      core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
       const tempDir = fs.mkdtempSync(
         path.join(githubWorkspace, 'setup-python-')
       );
       core.info(`Temporary directory created: ${tempDir}`);
 
-      let tempFilePaths: string[] = []; // Declare tempFilePath outside the loop
+      let tempFilePaths: string[] = []; // Array to hold paths of copied files
 
       // Copy the file into the temporary directory
       filePaths.forEach(filePath => {
@@ -53,6 +54,7 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           tempDir,
           path.basename(resolvedFilePath)
         ); // Update tempFilePath
+        core.info(`Copying file from ${resolvedFilePath} to ${tempFilePath}`); // Log source and destination paths
         fs.copyFileSync(resolvedFilePath, tempFilePath);
         tempFilePaths.push(tempFilePath); // Add to the list of temporary file paths
       });
