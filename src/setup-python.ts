@@ -62,6 +62,11 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         let updatedPath = path.join(tempDir, relativePath);
         core.info(`Updated Path: ${updatedPath}`);
         core.info(`Resolved File Path: ${resolvedFilePath}`);
+        if (!fs.existsSync(resolvedFilePath)) {
+          core.error(`File does not exist: ${resolvedFilePath}`);
+        } else {
+          core.info(`File exists: ${resolvedFilePath}`);
+        }
         fs.copyFileSync(resolvedFilePath, updatedPath);
         tempFilePaths.push(updatedPath);
       });
