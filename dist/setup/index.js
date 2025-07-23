@@ -96845,11 +96845,14 @@ function cacheDependencies(cache, pythonVersion) {
                     const resolvedFilePath = path.resolve(filePath);
                     core.info(`ResolvedFilePath: ${resolvedFilePath}`);
                     // Extract the part of resolvedPath excluding actionPath
-                    const relativePath = path.relative(actionPath, resolvedFilePath);
+                    const relativePath = resolvedFilePath.startsWith(actionPath)
+                        ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
+                        : resolvedFilePath;
                     core.info(`Relative Path (excluding actionPath): ${relativePath}`);
                     // Append the relative path to tempDir
-                    const updatedPath = path.join(tempDir, relativePath);
+                    let updatedPath = path.join(tempDir, relativePath);
                     core.info(`Updated Path: ${updatedPath}`);
+                    core.info(`Resolved File Path: ${resolvedFilePath}`);
                     fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
                     tempFilePaths.push(updatedPath);
                 });
