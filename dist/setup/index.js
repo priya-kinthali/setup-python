@@ -96836,17 +96836,18 @@ function cacheDependencies(cache, pythonVersion) {
                     .map(filePath => filePath.trim());
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
-                let tempFilePath = ''; // Declare tempFilePath outside the loop
+                let tempFilePaths = []; // Declare tempFilePath outside the loop
                 // Copy the file into the temporary directory
                 filePaths.forEach(filePath => {
                     const resolvedFilePath = path.resolve(filePath);
-                    tempFilePath = path.join(tempDir, path.basename(resolvedFilePath)); // Update tempFilePath
+                    const tempFilePath = path.join(tempDir, path.basename(resolvedFilePath)); // Update tempFilePath
                     core.info(`Temporary file path: ${tempFilePath}`);
                     fs_1.default.copyFileSync(resolvedFilePath, tempFilePath);
                     core.info('File copied to temporary directory.');
+                    tempFilePaths.push(tempFilePath); // Add to the list of temporary file paths
                 });
                 // Update cacheDependencyPath to point to the file in the temporary directory
-                cacheDependencyPath = tempFilePath;
+                cacheDependencyPath = tempFilePaths.join('\n');
                 core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
             }
         }
