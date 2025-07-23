@@ -96849,6 +96849,13 @@ function cacheDependencies(cache, pythonVersion) {
                 // Update cacheDependencyPath to point to the file in the temporary directory
                 cacheDependencyPath = tempFilePaths.join('\n');
                 core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
+                if (fs_1.default.existsSync(tempDir)) {
+                    console.log(`Cleaning up temporary directory: ${tempDir}`);
+                    fs_1.default.rmSync(tempDir, { recursive: true, force: true });
+                }
+                if (!fs_1.default.existsSync(tempDir)) {
+                    console.log('Temporary directory cleaned up.');
+                }
             }
         }
         const cacheDistributor = (0, cache_factory_1.getCacheDistributor)(cache, pythonVersion, cacheDependencyPath);
