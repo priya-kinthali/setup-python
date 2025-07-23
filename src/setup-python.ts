@@ -62,13 +62,6 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       // Update cacheDependencyPath to point to the file in the temporary directory
       cacheDependencyPath = tempFilePaths.join('\n');
       core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
-      if (fs.existsSync(tempDir)) {
-        console.log(`Cleaning up temporary directory: ${tempDir}`);
-        fs.rmSync(tempDir, {recursive: true, force: true});
-      }
-      if (!fs.existsSync(tempDir)) {
-        console.log('Temporary directory cleaned up.');
-      }
     }
   }
   const cacheDistributor = getCacheDistributor(
