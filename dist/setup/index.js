@@ -96839,6 +96839,7 @@ function cacheDependencies(cache, pythonVersion) {
                 core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
+                let tempFilePaths = []; // Array to hold paths of copied files
                 filePaths.forEach(filePath => {
                     core.info(`File Path: ${filePath}`);
                     const resolvedFilePath = path.resolve(filePath);
@@ -96849,9 +96850,10 @@ function cacheDependencies(cache, pythonVersion) {
                     // Append the relative path to tempDir
                     const updatedPath = path.join(tempDir, relativePath);
                     core.info(`Updated Path: ${updatedPath}`);
-                    // Update cacheDependencyPath with the new values
-                    cacheDependencyPath = updatedPath;
+                    fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
+                    tempFilePaths.push(updatedPath);
                 });
+                cacheDependencyPath = tempFilePaths.join('\n');
                 core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
             }
         }

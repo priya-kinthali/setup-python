@@ -46,7 +46,7 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         path.join(githubWorkspace, 'setup-python-')
       );
       core.info(`Temporary directory created: ${tempDir}`);
-
+      let tempFilePaths: string[] = []; // Array to hold paths of copied files
       filePaths.forEach(filePath => {
         core.info(`File Path: ${filePath}`);
         const resolvedFilePath = path.resolve(filePath);
@@ -59,10 +59,10 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         // Append the relative path to tempDir
         const updatedPath = path.join(tempDir, relativePath);
         core.info(`Updated Path: ${updatedPath}`);
-
-        // Update cacheDependencyPath with the new values
-        cacheDependencyPath = updatedPath;
+        fs.copyFileSync(resolvedFilePath, updatedPath);
+        tempFilePaths.push(updatedPath);
       });
+      cacheDependencyPath = tempFilePaths.join('\n');
       core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
     }
   }
