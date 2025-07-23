@@ -96853,11 +96853,9 @@ function cacheDependencies(cache, pythonVersion) {
                     let updatedPath = path.join(tempDir, relativePath);
                     core.info(`Updated Path: ${updatedPath}`);
                     core.info(`Resolved File Path: ${resolvedFilePath}`);
-                    if (!fs_1.default.existsSync(resolvedFilePath)) {
-                        core.error(`File does not exist: ${resolvedFilePath}`);
-                    }
-                    else {
-                        core.info(`File exists: ${resolvedFilePath}`);
+                    const destinationDir = path.dirname(updatedPath);
+                    if (!fs_1.default.existsSync(destinationDir)) {
+                        fs_1.default.mkdirSync(destinationDir, { recursive: true });
                     }
                     fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
                     tempFilePaths.push(updatedPath);
