@@ -96839,6 +96839,29 @@ function cacheDependencies(cache, pythonVersion) {
                 core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
+                const traverseDir = (dir, pattern) => {
+                    core.info(`Traversing directory: ${dir}`);
+                    const matchedFiles = [];
+                    const entries = fs_1.default.readdirSync(dir, { withFileTypes: true });
+                    core.info(`Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`);
+                    for (const entry of entries) {
+                        const fullPath = path.join(dir, entry.name);
+                        core.info(`Processing entry: ${entry.name}, Full path: ${fullPath}`);
+                        if (entry.isDirectory()) {
+                            core.info(`Entry is a directory: ${entry.name}`);
+                            // Recursively traverse subdirectories
+                            matchedFiles.push(...traverseDir(fullPath, pattern));
+                        }
+                        else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
+                            core.info(`File matches pattern: ${entry.name}`);
+                            matchedFiles.push(fullPath);
+                        }
+                        else {
+                            core.info(`File does not match pattern: ${entry.name}`);
+                        }
+                    }
+                    return matchedFiles;
+                };
                 const tempFilePaths = filePaths.flatMap(filePath => {
                     core.info(`File Path: ${filePath}`);
                     let resolvedPaths = [];
@@ -96849,57 +96872,17 @@ function cacheDependencies(cache, pythonVersion) {
                             ? process.cwd()
                             : path.dirname(filePath.replace(/\*\*\/?/, ''));
                         core.info(`Base directory resolved to: ${baseDir}`);
-                        const pattern = path.basename(filePath).replace('*', '');
+                        const pattern = path.basename(filePath).replace('*', '.*');
                         core.info(`Pattern to match: ${pattern}`);
-                        const traverseDir = (dir) => {
-                            core.info(`Traversing directory: ${dir}`);
-                            const entries = fs_1.default.readdirSync(dir, { withFileTypes: true });
-                            core.info(`Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`);
-                            for (const entry of entries) {
-                                const fullPath = path.join(dir, entry.name);
-                                core.info(`Processing entry: ${entry.name}, Full path: ${fullPath}`);
-                                if (entry.isDirectory()) {
-                                    core.info(`Entry is a directory: ${entry.name}`);
-                                    if (filePath.startsWith('**')) {
-                                        core.info(`Recursively traversing subdirectory: ${fullPath}`);
-                                        traverseDir(fullPath); // Recurse into subdirectories
-                                    }
-                                }
-                                else if (entry.name === pattern ||
-                                    entry.name.startsWith(pattern)) {
-                                    core.info(`File matches pattern: ${entry.name}`);
-                                    resolvedPaths.push(fullPath);
-                                }
-                                else {
-                                    core.info(`File does not match pattern: ${entry.name}`);
-                                }
-                            }
-                        };
-                        traverseDir(baseDir);
+                        // Traverse the directory recursively to find matching files
+                        resolvedPaths = traverseDir(baseDir, pattern);
                     }
                     else {
                         core.info(`No wildcard pattern detected. Resolving single file path: ${filePath}`);
                         resolvedPaths = [path.resolve(filePath)];
                         core.info(`Resolved file path: ${resolvedPaths[0]}`);
                     }
-                    return resolvedPaths.map(resolvedFilePath => {
-                        core.info(`Resolved File Path: ${resolvedFilePath}`);
-                        // Extract the part of resolvedPath excluding actionPath
-                        const relativePath = resolvedFilePath.startsWith(actionPath)
-                            ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
-                            : resolvedFilePath;
-                        core.info(`Relative Path (excluding actionPath): ${relativePath}`);
-                        // Append the relative path to tempDir
-                        let updatedPath = path.join(tempDir, relativePath);
-                        core.info(`Updated Path: ${updatedPath}`);
-                        // Ensure destination directory exists
-                        fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
-                        fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
-                        core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
-                        const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
-                        core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-                        return updatedPath;
-                    });
+                    return resolvedPaths;
                 });
                 core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
                 cacheDependencyPath = tempFilePaths.join('\n');
