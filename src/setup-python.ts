@@ -72,6 +72,11 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           const targetDir = updatedPath.split('**')[0]; // Base directory before `**` in `updatedPath`
           fs.mkdirSync(targetDir, {recursive: true}); // Ensure target directory exists
           core.info(`Target directory created: ${targetDir}`);
+          // Debug: List files in source directory
+          const filesInSourceDir = fs.readdirSync(sourceDir);
+          core.info(
+            `Files in source directory: ${filesInSourceDir.join(', ')}`
+          );
 
           const matchingFile = fs
             .readdirSync(sourceDir, {withFileTypes: true})

@@ -96863,6 +96863,9 @@ function cacheDependencies(cache, pythonVersion) {
                         const targetDir = updatedPath.split('**')[0]; // Base directory before `**` in `updatedPath`
                         fs_1.default.mkdirSync(targetDir, { recursive: true }); // Ensure target directory exists
                         core.info(`Target directory created: ${targetDir}`);
+                        // Debug: List files in source directory
+                        const filesInSourceDir = fs_1.default.readdirSync(sourceDir);
+                        core.info(`Files in source directory: ${filesInSourceDir.join(', ')}`);
                         const matchingFile = fs_1.default
                             .readdirSync(sourceDir, { withFileTypes: true })
                             .find(entry => entry.isFile() && entry.name === fileName); // Find the matching file
