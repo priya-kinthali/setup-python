@@ -67,15 +67,21 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
             for (const entry of entries) {
               const fullPath = path.join(dir, entry.name);
               if (entry.isDirectory()) {
-                matchedFiles = matchedFiles.concat(findFiles(fullPath)); // Recurse into subdirectories
-              } else if (regex.test(fullPath.replace(baseDir, ''))) {
-                matchedFiles.push(fullPath);
+                // Recurse into subdirectories
+                matchedFiles = matchedFiles.concat(findFiles(fullPath));
+              } else {
+                // Match the relative path against the regex
+                const relativePath = path.relative(baseDir, fullPath);
+                if (regex.test(relativePath)) {
+                  matchedFiles.push(fullPath);
+                }
               }
             }
 
             return matchedFiles;
           };
 
+          // Collect all matching files
           resolvedFilePaths = findFiles(baseDir);
         } else {
           // No wildcard, resolve normally
