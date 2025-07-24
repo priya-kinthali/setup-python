@@ -96839,8 +96839,7 @@ function cacheDependencies(cache, pythonVersion) {
                 core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
-                let tempFilePaths = []; // Array to hold paths of copied files
-                filePaths.forEach(filePath => {
+                const tempFilePaths = filePaths.map(filePath => {
                     core.info(`File Path: ${filePath}`);
                     const resolvedFilePath = path.resolve(filePath);
                     core.info(`ResolvedFilePath: ${resolvedFilePath}`);
@@ -96853,13 +96852,13 @@ function cacheDependencies(cache, pythonVersion) {
                     let updatedPath = path.join(tempDir, relativePath);
                     core.info(`Updated Path: ${updatedPath}`);
                     core.info(`Resolved File Path: ${resolvedFilePath}`);
-                    const destinationDir = path.dirname(updatedPath);
-                    if (!fs_1.default.existsSync(destinationDir)) {
-                        fs_1.default.mkdirSync(destinationDir, { recursive: true });
-                    }
+                    // Ensure destination directory exists
+                    fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
                     fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
-                    tempFilePaths.push(updatedPath);
+                    core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
+                    return updatedPath;
                 });
+                core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
                 cacheDependencyPath = tempFilePaths.join('\n');
                 core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
             }
