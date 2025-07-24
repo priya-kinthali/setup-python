@@ -96853,8 +96853,17 @@ function cacheDependencies(cache, pythonVersion) {
                     core.info(`Updated Path: ${updatedPath}`);
                     core.info(`Resolved File Path: ${resolvedFilePath}`);
                     // Ensure destination directory exists
-                    fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
-                    fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
+                    // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
+                    // fs.copyFileSync(resolvedFilePath, updatedPath);
+                    if (resolvedFilePath.includes('**')) {
+                        fs_1.default.readdirSync(resolvedFilePath.split('**')[0], { withFileTypes: true })
+                            .filter(entry => entry.isFile() && entry.name === path.basename(resolvedFilePath))
+                            .forEach(file => fs_1.default.copyFileSync(path.join(resolvedFilePath.split('**')[0], file.name), updatedPath.replace('**', '')));
+                    }
+                    else {
+                        fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
+                        fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
+                    }
                     core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
                     return updatedPath;
                 });

@@ -62,8 +62,24 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         core.info(`Updated Path: ${updatedPath}`);
         core.info(`Resolved File Path: ${resolvedFilePath}`);
         // Ensure destination directory exists
-        fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
-        fs.copyFileSync(resolvedFilePath, updatedPath);
+        // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
+        // fs.copyFileSync(resolvedFilePath, updatedPath);
+        if (resolvedFilePath.includes('**')) {
+          fs.readdirSync(resolvedFilePath.split('**')[0], {withFileTypes: true})
+            .filter(
+              entry =>
+                entry.isFile() && entry.name === path.basename(resolvedFilePath)
+            )
+            .forEach(file =>
+              fs.copyFileSync(
+                path.join(resolvedFilePath.split('**')[0], file.name),
+                updatedPath.replace('**', '')
+              )
+            );
+        } else {
+          fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
+          fs.copyFileSync(resolvedFilePath, updatedPath);
+        }
         core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
         return updatedPath;
       });
