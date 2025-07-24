@@ -55,8 +55,16 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           `Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`
         );
         // Convert the pattern to a proper regular expression
+        // const regexPattern = new RegExp(
+        //   '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
+        // );
         const regexPattern = new RegExp(
-          '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
+          '^' +
+            pattern
+              .replace(/\*\*\//g, '(.*\\/)?') // Match any directory structure
+              .replace(/\*/g, '[^/]*') // Match any characters except '/'
+              .replace(/\./g, '\\.') + // Escape '.' for regex
+            '$'
         );
 
         for (const entry of entries) {
@@ -68,7 +76,7 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
             // Recursively traverse subdirectories
             matchedFiles.push(...traverseDir(fullPath, pattern));
             // } else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
-          } else if (regexPattern.test(entry.name)) {
+          } else if (regexPattern.test(fullPath)) {
             core.info(`File matches pattern: ${entry.name}`);
             matchedFiles.push(fullPath);
           } else {
