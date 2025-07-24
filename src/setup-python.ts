@@ -59,12 +59,7 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         //   '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
         // );
         const regexPattern = new RegExp(
-          '^' +
-            pattern
-              .replace(/\*\*/g, '.*')
-              .replace(/\*/g, '[^/]*')
-              .replace(/\./g, '\\.') +
-            '$'
+          '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*') + '$'
         );
 
         for (const entry of entries) {

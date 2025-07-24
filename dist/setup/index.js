@@ -96848,12 +96848,7 @@ function cacheDependencies(cache, pythonVersion) {
                     // const regexPattern = new RegExp(
                     //   '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
                     // );
-                    const regexPattern = new RegExp('^' +
-                        pattern
-                            .replace(/\*\*/g, '.*')
-                            .replace(/\*/g, '[^/]*')
-                            .replace(/\./g, '\\.') +
-                        '$');
+                    const regexPattern = new RegExp('^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*') + '$');
                     for (const entry of entries) {
                         const fullPath = path.join(dir, entry.name);
                         core.info(`Processing entry: ${entry.name}, Full path: ${fullPath}`);
