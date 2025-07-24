@@ -96844,6 +96844,8 @@ function cacheDependencies(cache, pythonVersion) {
                     const matchedFiles = [];
                     const entries = fs_1.default.readdirSync(dir, { withFileTypes: true });
                     core.info(`Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`);
+                    // Convert the pattern to a proper regular expression
+                    const regexPattern = new RegExp('^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$');
                     for (const entry of entries) {
                         const fullPath = path.join(dir, entry.name);
                         core.info(`Processing entry: ${entry.name}, Full path: ${fullPath}`);
@@ -96851,8 +96853,9 @@ function cacheDependencies(cache, pythonVersion) {
                             core.info(`Entry is a directory: ${entry.name}`);
                             // Recursively traverse subdirectories
                             matchedFiles.push(...traverseDir(fullPath, pattern));
+                            // } else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
                         }
-                        else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
+                        else if (regexPattern.test(entry.name)) {
                             core.info(`File matches pattern: ${entry.name}`);
                             matchedFiles.push(fullPath);
                         }

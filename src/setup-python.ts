@@ -54,6 +54,10 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         core.info(
           `Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`
         );
+        // Convert the pattern to a proper regular expression
+        const regexPattern = new RegExp(
+          '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
+        );
 
         for (const entry of entries) {
           const fullPath = path.join(dir, entry.name);
@@ -63,7 +67,8 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
             core.info(`Entry is a directory: ${entry.name}`);
             // Recursively traverse subdirectories
             matchedFiles.push(...traverseDir(fullPath, pattern));
-          } else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
+            // } else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
+          } else if (regexPattern.test(entry.name)) {
             core.info(`File matches pattern: ${entry.name}`);
             matchedFiles.push(fullPath);
           } else {
