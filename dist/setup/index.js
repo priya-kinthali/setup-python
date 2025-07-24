@@ -96862,17 +96862,17 @@ function cacheDependencies(cache, pythonVersion) {
                         fs_1.default.mkdirSync(targetDir, { recursive: true });
                         const findFile = (dir, fileName) => {
                             const regex = new RegExp('^' + fileName.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
-                            for (const entry of fs_1.default.readdirSync(dir, { withFileTypes: true })) {
+                            return (fs_1.default
+                                .readdirSync(dir, { withFileTypes: true })
+                                .map(entry => {
                                 const fullPath = path.join(dir, entry.name);
-                                if (entry.isFile() && regex.test(entry.name))
-                                    return fullPath;
-                                if (entry.isDirectory()) {
-                                    const found = findFile(fullPath, fileName);
-                                    if (found)
-                                        return found;
-                                }
-                            }
-                            return null;
+                                return entry.isFile() && regex.test(entry.name)
+                                    ? fullPath
+                                    : entry.isDirectory()
+                                        ? findFile(fullPath, fileName)
+                                        : null;
+                            })
+                                .find(Boolean) || null);
                         };
                         const sourceFilePath = findFile(sourceDir, fileName);
                         if (!sourceFilePath)
@@ -96888,8 +96888,6 @@ function cacheDependencies(cache, pythonVersion) {
                     core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
                     const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
                     core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-                    const updatedContents = fs_1.default.readFileSync(updatedPath, 'utf8');
-                    core.info(`Contents of ${updatedPath}:\n${updatedContents}`);
                     core.info(`Updated path: ${updatedPath}`);
                     return updatedPath;
                 });

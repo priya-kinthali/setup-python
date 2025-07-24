@@ -74,15 +74,19 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
             const regex = new RegExp(
               '^' + fileName.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$'
             );
-            for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
-              const fullPath = path.join(dir, entry.name);
-              if (entry.isFile() && regex.test(entry.name)) return fullPath;
-              if (entry.isDirectory()) {
-                const found = findFile(fullPath, fileName);
-                if (found) return found;
-              }
-            }
-            return null;
+            return (
+              fs
+                .readdirSync(dir, {withFileTypes: true})
+                .map(entry => {
+                  const fullPath = path.join(dir, entry.name);
+                  return entry.isFile() && regex.test(entry.name)
+                    ? fullPath
+                    : entry.isDirectory()
+                      ? findFile(fullPath, fileName)
+                      : null;
+                })
+                .find(Boolean) || null
+            );
           };
 
           const sourceFilePath = findFile(sourceDir, fileName);
@@ -101,8 +105,6 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
         const fileContents = fs.readFileSync(updatedPath, 'utf8');
         core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-        const updatedContents = fs.readFileSync(updatedPath, 'utf8');
-        core.info(`Contents of ${updatedPath}:\n${updatedContents}`);
         core.info(`Updated path: ${updatedPath}`);
         return updatedPath;
       });
