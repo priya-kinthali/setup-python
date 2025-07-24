@@ -61,8 +61,8 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         const regexPattern = new RegExp(
           '^' +
             pattern
-              .replace(/\*\*\//g, '(.*\\/)?') // Match any directory structure
-              .replace(/\*/g, '[^/]*') // Match any characters except '/'
+              .replace(/\*\*\//g, '(?:.*/)?') // Match any directory structure
+              .replace(/\*/g, '[^/]*') // Match zero or more characters except '/'
               .replace(/\./g, '\\.') + // Escape '.' for regex
             '$'
         );

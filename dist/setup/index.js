@@ -96850,8 +96850,8 @@ function cacheDependencies(cache, pythonVersion) {
                     // );
                     const regexPattern = new RegExp('^' +
                         pattern
-                            .replace(/\*\*\//g, '(.*\\/)?') // Match any directory structure
-                            .replace(/\*/g, '[^/]*') // Match any characters except '/'
+                            .replace(/\*\*\//g, '(?:.*/)?') // Match any directory structure
+                            .replace(/\*/g, '[^/]*') // Match zero or more characters except '/'
                             .replace(/\./g, '\\.') + // Escape '.' for regex
                         '$');
                     for (const entry of entries) {
