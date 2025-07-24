@@ -61,9 +61,10 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         const regexPattern = new RegExp(
           '^' +
             pattern
-              .replace(/\./g, '\\.') // escape .
-              .replace(/\*\*/g, '.*') // ** → .*
-              .replace(/\*/g, '[^/]*') + // * → [^/]*
+              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // Escape special regex characters
+              .replace(/\*\*/g, '.*') // Replace ** with .*
+              .replace(/\*/g, '[^/]*') // Replace * with [^/]* (matches anything except /)
+              .replace(/\?/g, '.') + // Replace ? with . (matches a single character)
             '$'
         );
         core.info(`Generated regex pattern: ${regexPattern}`);
