@@ -70,34 +70,38 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           const [targetDir] = updatedPath.split('**');
           fs.mkdirSync(targetDir, {recursive: true});
 
-          const findFile = (dir: string, fileName: string): string | null => {
+          const findFile = (dir: string, fileName: string): string[] => {
             const regex = new RegExp(
               '^' + fileName.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$'
             );
-            return (
-              fs
-                .readdirSync(dir, {withFileTypes: true})
-                .map(entry => {
-                  const fullPath = path.join(dir, entry.name);
-                  return entry.isFile() && regex.test(entry.name)
-                    ? fullPath
-                    : entry.isDirectory()
-                      ? findFile(fullPath, fileName)
-                      : null;
-                })
-                .find(Boolean) || null
-            );
+            let matches: string[] = [];
+
+            fs.readdirSync(dir, {withFileTypes: true}).forEach(entry => {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.isFile() && regex.test(entry.name)) {
+                matches.push(fullPath); // Add matching file
+              } else if (entry.isDirectory()) {
+                matches = matches.concat(findFile(fullPath, fileName)); // Recursively search subdirectories
+              }
+            });
+
+            return matches;
           };
 
-          const sourceFilePath = findFile(sourceDir, fileName);
-          if (!sourceFilePath)
+          const sourceFilePaths = findFile(sourceDir, fileName);
+          if (sourceFilePaths.length === 0)
             throw new Error(
               `No matching file found for ${fileName} in ${sourceDir}.`
             );
 
-          updatedPath = path.join(targetDir, fileName);
-          fs.copyFileSync(sourceFilePath, updatedPath);
-          core.info(`Updated path is, File copied to: ${updatedPath}`);
+          sourceFilePaths.forEach(sourceFilePath => {
+            const updatedPath = path.join(
+              targetDir,
+              path.basename(sourceFilePath)
+            );
+            fs.copyFileSync(sourceFilePath, updatedPath);
+            core.info(`Updated path is, File copied to: ${updatedPath}`);
+          });
         } else {
           fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
           fs.copyFileSync(resolvedFilePath, updatedPath);
