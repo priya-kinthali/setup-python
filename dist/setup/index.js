@@ -96820,26 +96820,31 @@ function cacheDependencies(cache, pythonVersion) {
     return __awaiter(this, void 0, void 0, function* () {
         let cacheDependencyPath = core.getInput('cache-dependency-path') || undefined;
         if (cacheDependencyPath) {
-            // Get the GITHUB_WORKSPACE directory or fallback to process.cwd()
             core.info(`Initial cacheDependencyPath: ${cacheDependencyPath}`);
             const githubWorkspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
             core.info(`GITHUB_WORKSPACE: ${githubWorkspace}`);
-            // Resolve the absolute path of the input file
+            const actionPath = process.env.GITHUB_ACTION_PATH || '';
             const resolvedPath = path.resolve(cacheDependencyPath);
-            core.info(`Resolved absolute path of cacheDependencyPath: ${resolvedPath}`);
             // Check if the file is within the GITHUB_WORKSPACE
             if (!resolvedPath.startsWith(githubWorkspace)) {
                 core.info('Resolved path is outside of GITHUB_WORKSPACE.');
                 // Create a temporary directory within the GITHUB_WORKSPACE
+                const filePaths = resolvedPath
+                    .split('\n')
+                    .map(filePath => filePath.trim());
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
-                // Copy the file into the temporary directory
-                const tempFilePath = path.join(tempDir, path.basename(resolvedPath));
-                core.info(`Temporary file path: ${tempFilePath}`);
-                core.info('File copied to temporary directory.');
-                fs_1.default.copyFileSync(resolvedPath, tempFilePath);
-                // Update cacheDependencyPath to point to the file in the temporary directory
-                cacheDependencyPath = tempFilePath;
+                const tempFilePaths = filePaths.map(filePath => {
+                    const resolvedFilePath = path.resolve(filePath);
+                    const relativePath = resolvedFilePath.startsWith(actionPath)
+                        ? resolvedFilePath.slice(actionPath.length + 1)
+                        : resolvedFilePath;
+                    let updatedPath = path.join(tempDir, relativePath);
+                    fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
+                    fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
+                    return updatedPath;
+                });
+                cacheDependencyPath = tempFilePaths.join('\n');
                 core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
             }
         }
