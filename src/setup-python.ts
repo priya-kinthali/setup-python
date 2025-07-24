@@ -48,57 +48,50 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       core.info(`Temporary directory created: ${tempDir}`);
       const tempFilePaths = filePaths.flatMap(filePath => {
         core.info(`File Path: ${filePath}`);
-        const resolvedFilePath = path.resolve(filePath);
-        core.info(`ResolvedFilePath: ${resolvedFilePath}`);
 
-        // Handle wildcard patterns
-        const matchedFiles = filePath.includes('*')
-          ? (function findFiles(baseDir: string, pattern: string): string[] {
-              const regex = new RegExp(
-                '^' +
-                  pattern
-                    .replace(/\*\*/g, '.*') // Match any number of directories
-                    .replace(/\*/g, '[^/]*') + // Match any file or directory name
-                  '$'
-              );
-              const results: string[] = [];
-              const traverse = (dir: string) => {
-                for (const entry of fs.readdirSync(dir, {
-                  withFileTypes: true
-                })) {
-                  const fullPath = path.join(dir, entry.name);
-                  if (entry.isDirectory()) {
-                    traverse(fullPath);
-                  } else if (regex.test(path.relative(baseDir, fullPath))) {
-                    results.push(fullPath);
-                  }
-                }
-              };
-              traverse(baseDir);
-              return results;
-            })(path.dirname(resolvedFilePath), path.basename(filePath))
-          : [resolvedFilePath];
+        let resolvedFilePaths: string[] = [];
 
-        return matchedFiles.map(matchedFile => {
-          core.info(`Matched File: ${matchedFile}`);
-          const relativePath = matchedFile.startsWith(actionPath)
-            ? matchedFile.slice(actionPath.length + 1) // +1 to remove the trailing slash
-            : matchedFile;
+        if (filePath.includes('*')) {
+          // Handle wildcard pattern
+          const dir = path.dirname(filePath);
+          const pattern = path.basename(filePath);
+          const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`); // Convert wildcard to regex
+
+          fs.readdirSync(dir).forEach(file => {
+            const fullPath = path.join(dir, file);
+            if (fs.statSync(fullPath).isFile() && regex.test(file)) {
+              resolvedFilePaths.push(fullPath);
+            }
+          });
+        } else {
+          // No wildcard, resolve normally
+          resolvedFilePaths.push(path.resolve(filePath));
+        }
+
+        return resolvedFilePaths.map(resolvedFilePath => {
+          core.info(`Resolved File Path: ${resolvedFilePath}`);
+
+          // Extract the part of resolvedPath excluding actionPath
+          const relativePath = resolvedFilePath.startsWith(actionPath)
+            ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
+            : resolvedFilePath;
           core.info(`Relative Path (excluding actionPath): ${relativePath}`);
 
           // Append the relative path to tempDir
           let updatedPath = path.join(tempDir, relativePath);
           core.info(`Updated Path: ${updatedPath}`);
-
+          core.info(`Resolved File Path: ${resolvedFilePath}`);
           // Ensure destination directory exists
           fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
-          fs.copyFileSync(matchedFile, updatedPath);
-          core.info(`Copied: ${matchedFile} -> ${updatedPath}`);
+          fs.copyFileSync(resolvedFilePath, updatedPath);
+          core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
           const fileContents = fs.readFileSync(updatedPath, 'utf8');
           core.info(`Contents of ${updatedPath}:\n${fileContents}`);
+          core.info(`Updated path: ${updatedPath}`);
           return updatedPath;
         });
       });
+
       core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
       cacheDependencyPath = tempFilePaths.join('\n');
       core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);

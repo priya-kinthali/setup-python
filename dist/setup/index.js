@@ -96841,49 +96841,41 @@ function cacheDependencies(cache, pythonVersion) {
                 core.info(`Temporary directory created: ${tempDir}`);
                 const tempFilePaths = filePaths.flatMap(filePath => {
                     core.info(`File Path: ${filePath}`);
-                    const resolvedFilePath = path.resolve(filePath);
-                    core.info(`ResolvedFilePath: ${resolvedFilePath}`);
-                    // Handle wildcard patterns
-                    const matchedFiles = filePath.includes('*')
-                        ? (function findFiles(baseDir, pattern) {
-                            const regex = new RegExp('^' +
-                                pattern
-                                    .replace(/\*\*/g, '.*') // Match any number of directories
-                                    .replace(/\*/g, '[^/]*') + // Match any file or directory name
-                                '$');
-                            const results = [];
-                            const traverse = (dir) => {
-                                for (const entry of fs_1.default.readdirSync(dir, {
-                                    withFileTypes: true
-                                })) {
-                                    const fullPath = path.join(dir, entry.name);
-                                    if (entry.isDirectory()) {
-                                        traverse(fullPath);
-                                    }
-                                    else if (regex.test(path.relative(baseDir, fullPath))) {
-                                        results.push(fullPath);
-                                    }
-                                }
-                            };
-                            traverse(baseDir);
-                            return results;
-                        })(path.dirname(resolvedFilePath), path.basename(filePath))
-                        : [resolvedFilePath];
-                    return matchedFiles.map(matchedFile => {
-                        core.info(`Matched File: ${matchedFile}`);
-                        const relativePath = matchedFile.startsWith(actionPath)
-                            ? matchedFile.slice(actionPath.length + 1) // +1 to remove the trailing slash
-                            : matchedFile;
+                    let resolvedFilePaths = [];
+                    if (filePath.includes('*')) {
+                        // Handle wildcard pattern
+                        const dir = path.dirname(filePath);
+                        const pattern = path.basename(filePath);
+                        const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`); // Convert wildcard to regex
+                        fs_1.default.readdirSync(dir).forEach(file => {
+                            const fullPath = path.join(dir, file);
+                            if (fs_1.default.statSync(fullPath).isFile() && regex.test(file)) {
+                                resolvedFilePaths.push(fullPath);
+                            }
+                        });
+                    }
+                    else {
+                        // No wildcard, resolve normally
+                        resolvedFilePaths.push(path.resolve(filePath));
+                    }
+                    return resolvedFilePaths.map(resolvedFilePath => {
+                        core.info(`Resolved File Path: ${resolvedFilePath}`);
+                        // Extract the part of resolvedPath excluding actionPath
+                        const relativePath = resolvedFilePath.startsWith(actionPath)
+                            ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
+                            : resolvedFilePath;
                         core.info(`Relative Path (excluding actionPath): ${relativePath}`);
                         // Append the relative path to tempDir
                         let updatedPath = path.join(tempDir, relativePath);
                         core.info(`Updated Path: ${updatedPath}`);
+                        core.info(`Resolved File Path: ${resolvedFilePath}`);
                         // Ensure destination directory exists
                         fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
-                        fs_1.default.copyFileSync(matchedFile, updatedPath);
-                        core.info(`Copied: ${matchedFile} -> ${updatedPath}`);
+                        fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
+                        core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
                         const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
                         core.info(`Contents of ${updatedPath}:\n${fileContents}`);
+                        core.info(`Updated path: ${updatedPath}`);
                         return updatedPath;
                     });
                 });
