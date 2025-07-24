@@ -96878,7 +96878,7 @@ function cacheDependencies(cache, pythonVersion) {
                             : resolvedFilePath;
                         core.info(`Relative Path (excluding actionPath): ${relativePath}`);
                         // Append the relative path to tempDir
-                        let updatedPath = path.join(tempDir, relativePath);
+                        const updatedPath = path.join(tempDir, relativePath);
                         core.info(`Updated Path: ${updatedPath}`);
                         core.info(`Resolved File Path: ${resolvedFilePath}`);
                         // Ensure destination directory exists

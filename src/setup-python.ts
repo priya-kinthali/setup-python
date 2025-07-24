@@ -92,13 +92,15 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           core.info(`Relative Path (excluding actionPath): ${relativePath}`);
 
           // Append the relative path to tempDir
-          let updatedPath = path.join(tempDir, relativePath);
+          const updatedPath = path.join(tempDir, relativePath);
           core.info(`Updated Path: ${updatedPath}`);
           core.info(`Resolved File Path: ${resolvedFilePath}`);
+
           // Ensure destination directory exists
           fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
           fs.copyFileSync(resolvedFilePath, updatedPath);
           core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
+
           const fileContents = fs.readFileSync(updatedPath, 'utf8');
           core.info(`Contents of ${updatedPath}:\n${fileContents}`);
           core.info(`Updated path: ${updatedPath}`);
