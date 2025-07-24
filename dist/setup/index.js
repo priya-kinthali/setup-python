@@ -96845,22 +96845,29 @@ function cacheDependencies(cache, pythonVersion) {
                     core.info(`ResolvedFilePath: ${resolvedFilePath}`);
                     // Handle wildcard patterns
                     const matchedFiles = filePath.includes('*')
-                        ? (function findFiles(dir) {
-                            return fs_1.default
-                                .readdirSync(dir, { withFileTypes: true })
-                                .flatMap(entry => {
-                                const fullPath = path.join(dir, entry.name);
-                                if (entry.isDirectory()) {
-                                    return findFiles(fullPath);
+                        ? (function findFiles(baseDir, pattern) {
+                            const regex = new RegExp('^' +
+                                pattern
+                                    .replace(/\*\*/g, '.*') // Match any number of directories
+                                    .replace(/\*/g, '[^/]*') + // Match any file or directory name
+                                '$');
+                            const results = [];
+                            const traverse = (dir) => {
+                                for (const entry of fs_1.default.readdirSync(dir, {
+                                    withFileTypes: true
+                                })) {
+                                    const fullPath = path.join(dir, entry.name);
+                                    if (entry.isDirectory()) {
+                                        traverse(fullPath);
+                                    }
+                                    else if (regex.test(path.relative(baseDir, fullPath))) {
+                                        results.push(fullPath);
+                                    }
                                 }
-                                else if (path
-                                    .basename(fullPath)
-                                    .match(new RegExp(filePath.replace('*', '.*')))) {
-                                    return fullPath;
-                                }
-                                return [];
-                            });
-                        })(path.dirname(resolvedFilePath))
+                            };
+                            traverse(baseDir);
+                            return results;
+                        })(path.dirname(resolvedFilePath), path.basename(filePath))
                         : [resolvedFilePath];
                     return matchedFiles.map(matchedFile => {
                         core.info(`Matched File: ${matchedFile}`);
@@ -96871,14 +96878,12 @@ function cacheDependencies(cache, pythonVersion) {
                         // Append the relative path to tempDir
                         let updatedPath = path.join(tempDir, relativePath);
                         core.info(`Updated Path: ${updatedPath}`);
-                        core.info(`Resolved File Path: ${matchedFile}`);
                         // Ensure destination directory exists
                         fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
                         fs_1.default.copyFileSync(matchedFile, updatedPath);
                         core.info(`Copied: ${matchedFile} -> ${updatedPath}`);
                         const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
                         core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-                        core.info(`Updated path: ${updatedPath}`);
                         return updatedPath;
                     });
                 });
