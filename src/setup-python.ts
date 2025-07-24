@@ -50,13 +50,13 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         core.info(`File Path: ${filePath}`);
 
         let resolvedPaths: string[] = [];
-
         if (filePath.includes('*')) {
           core.info(`Wildcard pattern detected in filePath: ${filePath}`);
 
+          // Resolve the base directory by removing the wildcard part
           const baseDir = filePath.startsWith('**')
             ? process.cwd()
-            : path.dirname(filePath);
+            : path.dirname(filePath.replace(/\*\*\/?/, ''));
           core.info(`Base directory resolved to: ${baseDir}`);
 
           const pattern = path.basename(filePath).replace('*', '');
@@ -82,7 +82,10 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
                   core.info(`Recursively traversing subdirectory: ${fullPath}`);
                   traverseDir(fullPath); // Recurse into subdirectories
                 }
-              } else if (entry.name.startsWith(pattern)) {
+              } else if (
+                entry.name === pattern ||
+                entry.name.startsWith(pattern)
+              ) {
                 core.info(`File matches pattern: ${entry.name}`);
                 resolvedPaths.push(fullPath);
               } else {
