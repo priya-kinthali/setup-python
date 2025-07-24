@@ -74,34 +74,61 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         return matchedFiles;
       };
 
-      const tempFilePaths = filePaths.flatMap(filePath => {
-        core.info(`File Path: ${filePath}`);
+      const tempFilePaths = filePaths
+        .flatMap(filePath => {
+          core.info(`File Path: ${filePath}`);
 
-        let resolvedPaths: string[] = [];
-        if (filePath.includes('*')) {
-          core.info(`Wildcard pattern detected in filePath: ${filePath}`);
+          let resolvedPaths: string[] = [];
+          if (filePath.includes('*')) {
+            core.info(`Wildcard pattern detected in filePath: ${filePath}`);
 
-          // Resolve the base directory by removing the wildcard part
-          const baseDir = filePath.startsWith('**')
-            ? process.cwd()
-            : path.dirname(filePath.replace(/\*\*\/?/, ''));
-          core.info(`Base directory resolved to: ${baseDir}`);
+            // Resolve the base directory by removing the wildcard part
+            const baseDir = filePath.startsWith('**')
+              ? process.cwd()
+              : path.dirname(filePath.replace(/\*\*\/?/, ''));
+            core.info(`Base directory resolved to: ${baseDir}`);
 
-          const pattern = path.basename(filePath).replace('*', '.*');
-          core.info(`Pattern to match: ${pattern}`);
+            const pattern = path.basename(filePath).replace('*', '.*');
+            core.info(`Pattern to match: ${pattern}`);
 
-          // Traverse the directory recursively to find matching files
-          resolvedPaths = traverseDir(baseDir, pattern);
-        } else {
-          core.info(
-            `No wildcard pattern detected. Resolving single file path: ${filePath}`
-          );
-          resolvedPaths = [path.resolve(filePath)];
-          core.info(`Resolved file path: ${resolvedPaths[0]}`);
-        }
+            // Traverse the directory recursively to find matching files
+            resolvedPaths = traverseDir(baseDir, pattern);
+          } else {
+            core.info(
+              `No wildcard pattern detected. Resolving single file path: ${filePath}`
+            );
+            resolvedPaths = [path.resolve(filePath)];
+            core.info(`Resolved file path: ${resolvedPaths[0]}`);
+          }
 
-        return resolvedPaths;
-      });
+          return resolvedPaths;
+        })
+        .map(resolvedFilePath => {
+          core.info(`Resolved File Path: ${resolvedFilePath}`);
+
+          // Extract the part of resolvedPath excluding actionPath
+          const relativePath = resolvedFilePath.startsWith(actionPath)
+            ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
+            : resolvedFilePath;
+          core.info(`Relative Path (excluding actionPath): ${relativePath}`);
+
+          // Append the relative path to tempDir
+          const updatedPath = path.join(tempDir, relativePath);
+          core.info(`Updated Path: ${updatedPath}`);
+
+          // Ensure destination directory exists
+          fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
+
+          // Copy the file to the updated path
+          fs.copyFileSync(resolvedFilePath, updatedPath);
+          core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
+
+          // Read and log the contents of the copied file
+          const fileContents = fs.readFileSync(updatedPath, 'utf8');
+          core.info(`Contents of ${updatedPath}:\n${fileContents}`);
+
+          return updatedPath;
+        });
 
       core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
       cacheDependencyPath = tempFilePaths.join('\n');
