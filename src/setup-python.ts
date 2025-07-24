@@ -49,46 +49,58 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       const tempFilePaths = filePaths.flatMap(filePath => {
         core.info(`File Path: ${filePath}`);
 
-        let resolvedFilePaths: string[] = [];
+        let resolvedPaths: string[] = [];
 
         if (filePath.includes('*')) {
-          // Handle wildcard pattern
-          const baseDir = filePath.split('*')[0]; // Get the base directory before the wildcard
-          const pattern = filePath
-            .replace(baseDir, '')
-            .replace(/\*\*/g, '.*')
-            .replace(/\*/g, '[^/]*');
-          const regex = new RegExp(`^${pattern}$`); // Convert wildcard to regex
+          core.info(`Wildcard pattern detected in filePath: ${filePath}`);
 
-          const findFiles = (dir: string): string[] => {
-            let matchedFiles: string[] = [];
+          const baseDir = filePath.startsWith('**')
+            ? process.cwd()
+            : path.dirname(filePath);
+          core.info(`Base directory resolved to: ${baseDir}`);
+
+          const pattern = path.basename(filePath).replace('*', '');
+          core.info(`Pattern to match: ${pattern}`);
+
+          const traverseDir = (dir: string) => {
+            core.info(`Traversing directory: ${dir}`);
+
             const entries = fs.readdirSync(dir, {withFileTypes: true});
+            core.info(
+              `Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`
+            );
 
             for (const entry of entries) {
               const fullPath = path.join(dir, entry.name);
+              core.info(
+                `Processing entry: ${entry.name}, Full path: ${fullPath}`
+              );
+
               if (entry.isDirectory()) {
-                // Recurse into subdirectories
-                matchedFiles = matchedFiles.concat(findFiles(fullPath));
-              } else {
-                // Match the relative path against the regex
-                const relativePath = path.relative(baseDir, fullPath);
-                if (regex.test(relativePath)) {
-                  matchedFiles.push(fullPath);
+                core.info(`Entry is a directory: ${entry.name}`);
+                if (filePath.startsWith('**')) {
+                  core.info(`Recursively traversing subdirectory: ${fullPath}`);
+                  traverseDir(fullPath); // Recurse into subdirectories
                 }
+              } else if (entry.name.startsWith(pattern)) {
+                core.info(`File matches pattern: ${entry.name}`);
+                resolvedPaths.push(fullPath);
+              } else {
+                core.info(`File does not match pattern: ${entry.name}`);
               }
             }
-
-            return matchedFiles;
           };
 
-          // Collect all matching files
-          resolvedFilePaths = findFiles(baseDir);
+          traverseDir(baseDir);
         } else {
-          // No wildcard, resolve normally
-          resolvedFilePaths.push(path.resolve(filePath));
+          core.info(
+            `No wildcard pattern detected. Resolving single file path: ${filePath}`
+          );
+          resolvedPaths = [path.resolve(filePath)];
+          core.info(`Resolved file path: ${resolvedPaths[0]}`);
         }
 
-        return resolvedFilePaths.map(resolvedFilePath => {
+        return resolvedPaths.map(resolvedFilePath => {
           core.info(`Resolved File Path: ${resolvedFilePath}`);
 
           // Extract the part of resolvedPath excluding actionPath
@@ -98,9 +110,8 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           core.info(`Relative Path (excluding actionPath): ${relativePath}`);
 
           // Append the relative path to tempDir
-          const updatedPath = path.join(tempDir, relativePath);
+          let updatedPath = path.join(tempDir, relativePath);
           core.info(`Updated Path: ${updatedPath}`);
-          core.info(`Resolved File Path: ${resolvedFilePath}`);
 
           // Ensure destination directory exists
           fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
@@ -109,7 +120,6 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
 
           const fileContents = fs.readFileSync(updatedPath, 'utf8');
           core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-          core.info(`Updated path: ${updatedPath}`);
           return updatedPath;
         });
       });
