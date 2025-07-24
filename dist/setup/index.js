@@ -96856,38 +96856,27 @@ function cacheDependencies(cache, pythonVersion) {
                     // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
                     // fs.copyFileSync(resolvedFilePath, updatedPath);
                     if (resolvedFilePath.includes('**')) {
-                        const sourceDir = resolvedFilePath.split('**')[0]; // Base directory before `**`
-                        core.info(`Source directory resolved: ${sourceDir}`);
-                        const fileName = path.basename(resolvedFilePath); // Extract file name
-                        core.info(`File name extracted: ${fileName}`);
-                        const targetDir = updatedPath.split('**')[0]; // Base directory before `**` in `updatedPath`
-                        fs_1.default.mkdirSync(targetDir, { recursive: true }); // Ensure target directory exists
-                        core.info(`Target directory created: ${targetDir}`);
-                        // Recursive function to find the file
-                        function findFile(dir, fileName) {
-                            for (const entry of fs_1.default.readdirSync(dir, { withFileTypes: true })) {
-                                const fullPath = path.join(dir, entry.name);
-                                if (entry.isFile() && entry.name === fileName) {
-                                    return fullPath; // File found
-                                }
-                                else if (entry.isDirectory()) {
-                                    const result = findFile(fullPath, fileName);
-                                    if (result)
-                                        return result; // File found in subdirectory
-                                }
-                            }
-                            return null; // File not found
-                        }
+                        const [sourceDir] = resolvedFilePath.split('**');
+                        const fileName = path.basename(resolvedFilePath);
+                        const [targetDir] = updatedPath.split('**');
+                        fs_1.default.mkdirSync(targetDir, { recursive: true });
+                        const findFile = (dir, fileName) => fs_1.default.readdirSync(dir, { withFileTypes: true }).reduce((found, entry) => {
+                            if (found)
+                                return found;
+                            const fullPath = path.join(dir, entry.name);
+                            return entry.isFile() && entry.name === fileName
+                                ? fullPath
+                                : entry.isDirectory()
+                                    ? findFile(fullPath, fileName)
+                                    : null;
+                        }, null);
                         const sourceFilePath = findFile(sourceDir, fileName);
-                        if (!sourceFilePath) {
+                        if (!sourceFilePath)
                             throw new Error(`No matching file found for ${fileName} in ${sourceDir}.`);
-                        }
-                        core.info(`Source file path resolved: ${sourceFilePath}`);
-                        const targetFilePath = path.join(targetDir, fileName); // Construct target file path
-                        fs_1.default.copyFileSync(sourceFilePath, targetFilePath); // Copy the file
-                        core.info(`File copied from ${sourceFilePath} to ${targetFilePath}`);
-                        updatedPath = targetFilePath; // Update `updatedPath` to the actual copied file path
-                        core.info(`Updated path set to: ${updatedPath}`);
+                        const targetFilePath = path.join(targetDir, fileName);
+                        fs_1.default.copyFileSync(sourceFilePath, targetFilePath);
+                        updatedPath = targetFilePath;
+                        core.info(`Updated path is, File copied to: ${updatedPath}`);
                     }
                     else {
                         fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
