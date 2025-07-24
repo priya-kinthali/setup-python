@@ -81,6 +81,11 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           fs.copyFileSync(resolvedFilePath, updatedPath);
         }
         core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
+        const fileContents = fs.readFileSync(updatedPath, 'utf8');
+        core.info(`Contents of ${updatedPath}:\n${fileContents}`);
+        const updatedContents = fs.readFileSync(updatedPath, 'utf8');
+        core.info(`Contents of ${updatedPath}:\n${updatedContents}`);
+        core.info(`Updated path: ${updatedPath}`);
         return updatedPath;
       });
       core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);

@@ -96865,6 +96865,11 @@ function cacheDependencies(cache, pythonVersion) {
                         fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
                     }
                     core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
+                    const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
+                    core.info(`Contents of ${updatedPath}:\n${fileContents}`);
+                    const updatedContents = fs_1.default.readFileSync(updatedPath, 'utf8');
+                    core.info(`Contents of ${updatedPath}:\n${updatedContents}`);
+                    core.info(`Updated path: ${updatedPath}`);
                     return updatedPath;
                 });
                 core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
