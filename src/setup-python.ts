@@ -72,29 +72,31 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           const targetDir = updatedPath.split('**')[0]; // Base directory before `**` in `updatedPath`
           fs.mkdirSync(targetDir, {recursive: true}); // Ensure target directory exists
           core.info(`Target directory created: ${targetDir}`);
-          // Debug: List files in source directory
-          const filesInSourceDir = fs.readdirSync(sourceDir);
-          core.info(
-            `Files in source directory: ${filesInSourceDir.join(', ')}`
-          );
+          // Recursive function to find the file
+          function findFile(dir: string, fileName: string): string | null {
+            for (const entry of fs.readdirSync(dir, {withFileTypes: true})) {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.isFile() && entry.name === fileName) {
+                return fullPath; // File found
+              } else if (entry.isDirectory()) {
+                const result = findFile(fullPath, fileName);
+                if (result) return result; // File found in subdirectory
+              }
+            }
+            return null; // File not found
+          }
 
-          const matchingFile = fs
-            .readdirSync(sourceDir, {withFileTypes: true})
-            .find(entry => entry.isFile() && entry.name === fileName); // Find the matching file
-
-          if (!matchingFile) {
+          const sourceFilePath = findFile(sourceDir, fileName);
+          if (!sourceFilePath) {
             throw new Error(
-              `No matching file found for ${fileName} in ${sourceDir}`
+              `No matching file found for ${fileName} in ${sourceDir}.`
             );
           }
 
-          const sourceFilePath = path.join(sourceDir, matchingFile.name);
           core.info(`Source file path resolved: ${sourceFilePath}`);
-
-          const targetFilePath = path.join(targetDir, matchingFile.name); // Construct target file path
+          const targetFilePath = path.join(targetDir, fileName); // Construct target file path
           fs.copyFileSync(sourceFilePath, targetFilePath); // Copy the file
           core.info(`File copied from ${sourceFilePath} to ${targetFilePath}`);
-
           updatedPath = targetFilePath; // Update `updatedPath` to the actual copied file path
           core.info(`Updated path set to: ${updatedPath}`);
         } else {
