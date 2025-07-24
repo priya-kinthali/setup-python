@@ -96856,9 +96856,12 @@ function cacheDependencies(cache, pythonVersion) {
                     // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
                     // fs.copyFileSync(resolvedFilePath, updatedPath);
                     if (resolvedFilePath.includes('**')) {
-                        fs_1.default.readdirSync(resolvedFilePath.split('**')[0], { withFileTypes: true })
+                        const sourceDir = resolvedFilePath.split('**')[0];
+                        const targetDir = path.dirname(updatedPath.replace('**', ''));
+                        fs_1.default.mkdirSync(targetDir, { recursive: true });
+                        fs_1.default.readdirSync(sourceDir, { withFileTypes: true })
                             .filter(entry => entry.isFile() && entry.name === path.basename(resolvedFilePath))
-                            .forEach(file => fs_1.default.copyFileSync(path.join(resolvedFilePath.split('**')[0], file.name), updatedPath.replace('**', '')));
+                            .forEach(file => fs_1.default.copyFileSync(path.join(sourceDir, file.name), updatedPath.replace('**', '')));
                     }
                     else {
                         fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });

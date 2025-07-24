@@ -65,14 +65,17 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
         // fs.copyFileSync(resolvedFilePath, updatedPath);
         if (resolvedFilePath.includes('**')) {
-          fs.readdirSync(resolvedFilePath.split('**')[0], {withFileTypes: true})
+          const sourceDir = resolvedFilePath.split('**')[0];
+          const targetDir = path.dirname(updatedPath.replace('**', ''));
+          fs.mkdirSync(targetDir, {recursive: true});
+          fs.readdirSync(sourceDir, {withFileTypes: true})
             .filter(
               entry =>
                 entry.isFile() && entry.name === path.basename(resolvedFilePath)
             )
             .forEach(file =>
               fs.copyFileSync(
-                path.join(resolvedFilePath.split('**')[0], file.name),
+                path.join(sourceDir, file.name),
                 updatedPath.replace('**', '')
               )
             );
