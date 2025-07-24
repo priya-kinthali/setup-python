@@ -53,16 +53,30 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
 
         if (filePath.includes('*')) {
           // Handle wildcard pattern
-          const dir = path.dirname(filePath);
-          const pattern = path.basename(filePath);
-          const regex = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`); // Convert wildcard to regex
+          const baseDir = filePath.split('*')[0]; // Get the base directory before the wildcard
+          const pattern = filePath
+            .replace(baseDir, '')
+            .replace(/\*\*/g, '.*')
+            .replace(/\*/g, '[^/]*');
+          const regex = new RegExp(`^${pattern}$`); // Convert wildcard to regex
 
-          fs.readdirSync(dir).forEach(file => {
-            const fullPath = path.join(dir, file);
-            if (fs.statSync(fullPath).isFile() && regex.test(file)) {
-              resolvedFilePaths.push(fullPath);
+          const findFiles = (dir: string): string[] => {
+            let matchedFiles: string[] = [];
+            const entries = fs.readdirSync(dir, {withFileTypes: true});
+
+            for (const entry of entries) {
+              const fullPath = path.join(dir, entry.name);
+              if (entry.isDirectory()) {
+                matchedFiles = matchedFiles.concat(findFiles(fullPath)); // Recurse into subdirectories
+              } else if (regex.test(fullPath.replace(baseDir, ''))) {
+                matchedFiles.push(fullPath);
+              }
             }
-          });
+
+            return matchedFiles;
+          };
+
+          resolvedFilePaths = findFiles(baseDir);
         } else {
           // No wildcard, resolve normally
           resolvedFilePaths.push(path.resolve(filePath));
