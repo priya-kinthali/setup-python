@@ -61,9 +61,11 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         const regexPattern = new RegExp(
           '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '[^/]*') + '$'
         );
+        core.info(`Generated regex pattern: ${regexPattern}`);
 
         for (const entry of entries) {
           const fullPath = path.join(dir, entry.name);
+          core.info(`Testing file: ${fullPath}`);
           core.info(`Processing entry: ${entry.name}, Full path: ${fullPath}`);
 
           if (entry.isDirectory()) {
