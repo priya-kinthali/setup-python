@@ -96855,27 +96855,30 @@ function cacheDependencies(cache, pythonVersion) {
                     // Ensure destination directory exists
                     // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
                     // fs.copyFileSync(resolvedFilePath, updatedPath);
-                    if (resolvedFilePath.includes('**')) {
+                    if (resolvedFilePath.includes('*')) {
                         const [sourceDir] = resolvedFilePath.split('**');
                         const fileName = path.basename(resolvedFilePath);
                         const [targetDir] = updatedPath.split('**');
                         fs_1.default.mkdirSync(targetDir, { recursive: true });
-                        const findFile = (dir, fileName) => fs_1.default.readdirSync(dir, { withFileTypes: true }).reduce((found, entry) => {
-                            if (found)
-                                return found;
-                            const fullPath = path.join(dir, entry.name);
-                            return entry.isFile() && entry.name === fileName
-                                ? fullPath
-                                : entry.isDirectory()
-                                    ? findFile(fullPath, fileName)
-                                    : null;
-                        }, null);
+                        const findFile = (dir, fileName) => {
+                            const regex = new RegExp('^' + fileName.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
+                            for (const entry of fs_1.default.readdirSync(dir, { withFileTypes: true })) {
+                                const fullPath = path.join(dir, entry.name);
+                                if (entry.isFile() && regex.test(entry.name))
+                                    return fullPath;
+                                if (entry.isDirectory()) {
+                                    const found = findFile(fullPath, fileName);
+                                    if (found)
+                                        return found;
+                                }
+                            }
+                            return null;
+                        };
                         const sourceFilePath = findFile(sourceDir, fileName);
                         if (!sourceFilePath)
                             throw new Error(`No matching file found for ${fileName} in ${sourceDir}.`);
-                        const targetFilePath = path.join(targetDir, fileName);
-                        fs_1.default.copyFileSync(sourceFilePath, targetFilePath);
-                        updatedPath = targetFilePath;
+                        updatedPath = path.join(targetDir, fileName);
+                        fs_1.default.copyFileSync(sourceFilePath, updatedPath);
                         core.info(`Updated path is, File copied to: ${updatedPath}`);
                     }
                     else {
