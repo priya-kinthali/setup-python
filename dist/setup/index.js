@@ -96857,11 +96857,17 @@ function cacheDependencies(cache, pythonVersion) {
                     // fs.copyFileSync(resolvedFilePath, updatedPath);
                     if (resolvedFilePath.includes('**')) {
                         const sourceDir = resolvedFilePath.split('**')[0];
-                        const targetDir = path.dirname(updatedPath.replace('**', ''));
-                        fs_1.default.mkdirSync(targetDir, { recursive: true });
+                        const fileName = path.basename(resolvedFilePath); // Extract the file name
+                        const targetDir = path.dirname(updatedPath.replace('**', '')); // Resolve target directory
+                        fs_1.default.mkdirSync(targetDir, { recursive: true }); // Ensure target directory exists
                         fs_1.default.readdirSync(sourceDir, { withFileTypes: true })
-                            .filter(entry => entry.isFile() && entry.name === path.basename(resolvedFilePath))
-                            .forEach(file => fs_1.default.copyFileSync(path.join(sourceDir, file.name), updatedPath.replace('**', '')));
+                            .filter(entry => entry.isFile() && entry.name === fileName) // Match the file name
+                            .forEach(file => {
+                            const sourceFilePath = path.join(sourceDir, file.name);
+                            const targetFilePath = path.join(targetDir, file.name); // Construct target file path
+                            fs_1.default.copyFileSync(sourceFilePath, targetFilePath); // Copy the file
+                            updatedPath = targetFilePath; // Update `updatedPath` to the actual copied file path
+                        });
                     }
                     else {
                         fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });

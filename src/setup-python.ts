@@ -66,19 +66,18 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         // fs.copyFileSync(resolvedFilePath, updatedPath);
         if (resolvedFilePath.includes('**')) {
           const sourceDir = resolvedFilePath.split('**')[0];
-          const targetDir = path.dirname(updatedPath.replace('**', ''));
-          fs.mkdirSync(targetDir, {recursive: true});
+          const fileName = path.basename(resolvedFilePath); // Extract the file name
+          const targetDir = path.dirname(updatedPath.replace('**', '')); // Resolve target directory
+          fs.mkdirSync(targetDir, {recursive: true}); // Ensure target directory exists
+
           fs.readdirSync(sourceDir, {withFileTypes: true})
-            .filter(
-              entry =>
-                entry.isFile() && entry.name === path.basename(resolvedFilePath)
-            )
-            .forEach(file =>
-              fs.copyFileSync(
-                path.join(sourceDir, file.name),
-                updatedPath.replace('**', '')
-              )
-            );
+            .filter(entry => entry.isFile() && entry.name === fileName) // Match the file name
+            .forEach(file => {
+              const sourceFilePath = path.join(sourceDir, file.name);
+              const targetFilePath = path.join(targetDir, file.name); // Construct target file path
+              fs.copyFileSync(sourceFilePath, targetFilePath); // Copy the file
+              updatedPath = targetFilePath; // Update `updatedPath` to the actual copied file path
+            });
         } else {
           fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
           fs.copyFileSync(resolvedFilePath, updatedPath);
