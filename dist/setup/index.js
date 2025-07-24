@@ -96839,59 +96839,48 @@ function cacheDependencies(cache, pythonVersion) {
                 core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
-                const tempFilePaths = filePaths.map(filePath => {
+                const tempFilePaths = filePaths.flatMap(filePath => {
                     core.info(`File Path: ${filePath}`);
                     const resolvedFilePath = path.resolve(filePath);
                     core.info(`ResolvedFilePath: ${resolvedFilePath}`);
-                    // Extract the part of resolvedPath excluding actionPath
-                    const relativePath = resolvedFilePath.startsWith(actionPath)
-                        ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
-                        : resolvedFilePath;
-                    core.info(`Relative Path (excluding actionPath): ${relativePath}`);
-                    // Append the relative path to tempDir
-                    let updatedPath = path.join(tempDir, relativePath);
-                    core.info(`Updated Path: ${updatedPath}`);
-                    core.info(`Resolved File Path: ${resolvedFilePath}`);
-                    // Ensure destination directory exists
-                    // fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
-                    // fs.copyFileSync(resolvedFilePath, updatedPath);
-                    if (resolvedFilePath.includes('*')) {
-                        const [sourceDir] = resolvedFilePath.split('**');
-                        const fileName = path.basename(resolvedFilePath);
-                        const [targetDir] = updatedPath.split('**');
-                        fs_1.default.mkdirSync(targetDir, { recursive: true });
-                        const findFile = (dir, fileName) => {
-                            const regex = new RegExp('^' + fileName.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$');
-                            let matches = [];
-                            fs_1.default.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+                    // Handle wildcard patterns
+                    const matchedFiles = filePath.includes('*')
+                        ? (function findFiles(dir) {
+                            return fs_1.default
+                                .readdirSync(dir, { withFileTypes: true })
+                                .flatMap(entry => {
                                 const fullPath = path.join(dir, entry.name);
-                                if (entry.isFile() && regex.test(entry.name)) {
-                                    matches.push(fullPath); // Add matching file
+                                if (entry.isDirectory()) {
+                                    return findFiles(fullPath);
                                 }
-                                else if (entry.isDirectory()) {
-                                    matches = matches.concat(findFile(fullPath, fileName)); // Recursively search subdirectories
+                                else if (path
+                                    .basename(fullPath)
+                                    .match(new RegExp(filePath.replace('*', '.*')))) {
+                                    return fullPath;
                                 }
+                                return [];
                             });
-                            return matches;
-                        };
-                        const sourceFilePaths = findFile(sourceDir, fileName);
-                        if (sourceFilePaths.length === 0)
-                            throw new Error(`No matching file found for ${fileName} in ${sourceDir}.`);
-                        sourceFilePaths.forEach(sourceFilePath => {
-                            const updatedPath = path.join(targetDir, path.basename(sourceFilePath));
-                            fs_1.default.copyFileSync(sourceFilePath, updatedPath);
-                            core.info(`Updated path is, File copied to: ${updatedPath}`);
-                        });
-                    }
-                    else {
+                        })(path.dirname(resolvedFilePath))
+                        : [resolvedFilePath];
+                    return matchedFiles.map(matchedFile => {
+                        core.info(`Matched File: ${matchedFile}`);
+                        const relativePath = matchedFile.startsWith(actionPath)
+                            ? matchedFile.slice(actionPath.length + 1) // +1 to remove the trailing slash
+                            : matchedFile;
+                        core.info(`Relative Path (excluding actionPath): ${relativePath}`);
+                        // Append the relative path to tempDir
+                        let updatedPath = path.join(tempDir, relativePath);
+                        core.info(`Updated Path: ${updatedPath}`);
+                        core.info(`Resolved File Path: ${matchedFile}`);
+                        // Ensure destination directory exists
                         fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
-                        fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
-                    }
-                    core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
-                    const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
-                    core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-                    core.info(`Updated path: ${updatedPath}`);
-                    return updatedPath;
+                        fs_1.default.copyFileSync(matchedFile, updatedPath);
+                        core.info(`Copied: ${matchedFile} -> ${updatedPath}`);
+                        const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
+                        core.info(`Contents of ${updatedPath}:\n${fileContents}`);
+                        core.info(`Updated path: ${updatedPath}`);
+                        return updatedPath;
+                    });
                 });
                 core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
                 cacheDependencyPath = tempFilePaths.join('\n');
