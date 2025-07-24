@@ -96850,9 +96850,9 @@ function cacheDependencies(cache, pythonVersion) {
                     // );
                     const regexPattern = new RegExp('^' +
                         pattern
-                            .replace(/\*\*\//g, '(?:.*/)?') // Match any directory structure
-                            .replace(/\*/g, '[^/]*') // Match zero or more characters except '/'
-                            .replace(/\./g, '\\.') + // Escape '.' for regex
+                            .replace(/\*\*/g, '.*')
+                            .replace(/\*/g, '[^/]*')
+                            .replace(/\./g, '\\.') +
                         '$');
                     for (const entry of entries) {
                         const fullPath = path.join(dir, entry.name);
