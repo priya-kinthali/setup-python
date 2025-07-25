@@ -96849,7 +96849,8 @@ function cacheDependencies(cache, pythonVersion) {
                         pattern
                             .replace(/\*\*/g, '.*') // Match any subdirectory
                             .replace(/\*/g, '[^/]*') // Match any file name in the current directory
-                            .replace(/(\w+)\*/g, '$1(-[^/]+)?') + // Dynamically handle optional suffixes for any word followed by '*'
+                            .replace(/(\w+)\*/g, '$1(-[^/]+)?') // Dynamically handle optional suffixes for any word followed by '*'
+                            .replace(/\.(\w+)$/, '(\\.[^/]+)?') + // Dynamically handle file extensions
                         '$');
                     core.info(`Generated regex pattern: ${regexPattern}`);
                     for (const entry of entries) {
