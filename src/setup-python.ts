@@ -121,15 +121,6 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         .map(resolvedFilePath => {
           core.info(`Resolved File Path: ${resolvedFilePath}`);
 
-          // Check for wildcard patterns
-          if (
-            resolvedFilePath.includes('*') ||
-            resolvedFilePath.includes('**')
-          ) {
-            core.info(`Wildcard detected in path: ${resolvedFilePath}`);
-            return resolvedFilePath; // Return the original path with wildcard patterns
-          }
-
           // Extract the part of resolvedPath excluding actionPath
           const relativePath = resolvedFilePath.startsWith(actionPath)
             ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
