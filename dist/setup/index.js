@@ -96808,6 +96808,7 @@ const finderGraalPy = __importStar(__nccwpck_require__(1663));
 const path = __importStar(__nccwpck_require__(6928));
 const os = __importStar(__nccwpck_require__(857));
 const fs_1 = __importDefault(__nccwpck_require__(9896));
+const crypto = __importStar(__nccwpck_require__(6982));
 const cache_factory_1 = __nccwpck_require__(665);
 const utils_1 = __nccwpck_require__(1798);
 function isPyPyVersion(versionSpec) {
@@ -96921,6 +96922,12 @@ function cacheDependencies(cache, pythonVersion) {
                     const fileContents = fs_1.default.readFileSync(updatedPath, 'utf8');
                     core.info(`Contents of ${updatedPath}:\n${fileContents}`);
                     return updatedPath;
+                });
+                const sortedTempFilePaths = tempFilePaths.sort(); // Sort file paths to ensure consistent order
+                core.info(`Sorted tempFilePaths: ${JSON.stringify(sortedTempFilePaths)}`);
+                const fileHashes = sortedTempFilePaths.map(filePath => {
+                    const fileContents = fs_1.default.readFileSync(filePath, 'utf8'); // Read file contents
+                    return crypto.createHash('sha256').update(fileContents).digest('hex'); // Hash file contents
                 });
                 core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
                 cacheDependencyPath = tempFilePaths.join('\n');

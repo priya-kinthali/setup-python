@@ -5,6 +5,7 @@ import * as finderGraalPy from './find-graalpy';
 import * as path from 'path';
 import * as os from 'os';
 import fs from 'fs';
+import * as crypto from 'crypto';
 import {getCacheDistributor} from './cache-distributions/cache-factory';
 import {
   isCacheFeatureAvailable,
@@ -152,7 +153,13 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
 
           return updatedPath;
         });
+      const sortedTempFilePaths = tempFilePaths.sort(); // Sort file paths to ensure consistent order
+      core.info(`Sorted tempFilePaths: ${JSON.stringify(sortedTempFilePaths)}`);
 
+      const fileHashes = sortedTempFilePaths.map(filePath => {
+        const fileContents = fs.readFileSync(filePath, 'utf8'); // Read file contents
+        return crypto.createHash('sha256').update(fileContents).digest('hex'); // Hash file contents
+      });
       core.info(`Final tempFilePaths: ${JSON.stringify(tempFilePaths)}`);
       cacheDependencyPath = tempFilePaths.join('\n');
       core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
