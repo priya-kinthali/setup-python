@@ -5,6 +5,7 @@ import * as finderGraalPy from './find-graalpy';
 import * as path from 'path';
 import * as os from 'os';
 import fs from 'fs';
+import * as crypto from 'crypto';
 import {getCacheDistributor} from './cache-distributions/cache-factory';
 import {
   isCacheFeatureAvailable,
@@ -25,14 +26,12 @@ function isGraalPyVersion(versionSpec: string) {
 async function cacheDependencies(cache: string, pythonVersion: string) {
   let cacheDependencyPath = core.getInput('cache-dependency-path') || undefined;
   if (cacheDependencyPath) {
-    core.info(`Initial cacheDependencyPath: ${cacheDependencyPath}`);
     const githubWorkspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
-    core.info(`GITHUB_WORKSPACE: ${githubWorkspace}`);
-    const actionPath = process.env.GITHUB_ACTION_PATH || '';
     const resolvedPath = path.resolve(cacheDependencyPath);
     // Check if the file is within the GITHUB_WORKSPACE
     if (!resolvedPath.startsWith(githubWorkspace)) {
       core.info('Resolved path is outside of GITHUB_WORKSPACE.');
+      const actionPath = process.env.GITHUB_ACTION_PATH || '';
       // Create a temporary directory within the GITHUB_WORKSPACE
       const filePaths = resolvedPath
         .split('\n')
@@ -40,19 +39,58 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       const tempDir = fs.mkdtempSync(
         path.join(githubWorkspace, 'setup-python-')
       );
-      core.info(`Temporary directory created: ${tempDir}`);
-      const tempFilePaths = filePaths.map(filePath => {
-        const resolvedFilePath = path.resolve(filePath);
-        const relativePath = resolvedFilePath.startsWith(actionPath)
-          ? resolvedFilePath.slice(actionPath.length + 1)
-          : resolvedFilePath;
-        let updatedPath = path.join(tempDir, relativePath);
-        fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
-        fs.copyFileSync(resolvedFilePath, updatedPath);
-        return updatedPath;
+      // Handle wildcard pattern files
+      const traverseDir = (dir: string, pattern: string): string[] => {
+        const matchedFiles: string[] = [];
+        const entries = fs.readdirSync(dir, {withFileTypes: true});
+        const regexPattern = new RegExp(
+          '^' +
+            pattern
+              .replace(/\*\*/g, '.*')
+              .replace(/\*/g, '[^/]*')
+              .replace(/(\w+)\*/g, '$1(-[^/]+)?')
+              .replace(/\.(\w+)$/, '(\\.[^/]+)?') +
+            '$'
+        );
+        for (const entry of entries) {
+          const fullPath = path.join(dir, entry.name);
+          if (entry.isDirectory()) {
+            matchedFiles.push(...traverseDir(fullPath, pattern));
+          } else if (regexPattern.test(entry.name)) {
+            matchedFiles.push(fullPath);
+          }
+        }
+        return matchedFiles;
+      };
+      const tempFilePaths = filePaths
+        .flatMap(filePath => {
+          let resolvedPaths: string[] = [];
+          if (filePath.includes('*')) {
+            const baseDir = filePath.startsWith('**')
+              ? process.cwd()
+              : path.dirname(filePath.replace(/\*\*\/?/, ''));
+            const pattern = path.basename(filePath).replace('*', '.*');
+            resolvedPaths = traverseDir(baseDir, pattern);
+          } else {
+            resolvedPaths = [path.resolve(filePath)];
+          }
+          return resolvedPaths;
+        })
+        .map(resolvedFilePath => {
+          const relativePath = resolvedFilePath.startsWith(actionPath)
+            ? resolvedFilePath.slice(actionPath.length + 1)
+            : resolvedFilePath;
+          const updatedPath = path.join(tempDir, relativePath);
+          fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
+          fs.copyFileSync(resolvedFilePath, updatedPath);
+          return updatedPath;
+        });
+      const sortedTempFilePaths = tempFilePaths.sort(); // Sort file paths to ensure consistent order
+      const fileHashes = sortedTempFilePaths.map(filePath => {
+        const fileContents = fs.readFileSync(filePath, 'utf8'); // Read file contents
+        return crypto.createHash('sha256').update(fileContents).digest('hex'); // Hash file contents
       });
       cacheDependencyPath = tempFilePaths.join('\n');
-      core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
     }
   }
   const cacheDistributor = getCacheDistributor(

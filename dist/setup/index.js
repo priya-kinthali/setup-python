@@ -96808,6 +96808,7 @@ const finderGraalPy = __importStar(__nccwpck_require__(1663));
 const path = __importStar(__nccwpck_require__(6928));
 const os = __importStar(__nccwpck_require__(857));
 const fs_1 = __importDefault(__nccwpck_require__(9896));
+const crypto = __importStar(__nccwpck_require__(6982));
 const cache_factory_1 = __nccwpck_require__(665);
 const utils_1 = __nccwpck_require__(1798);
 function isPyPyVersion(versionSpec) {
@@ -96820,32 +96821,69 @@ function cacheDependencies(cache, pythonVersion) {
     return __awaiter(this, void 0, void 0, function* () {
         let cacheDependencyPath = core.getInput('cache-dependency-path') || undefined;
         if (cacheDependencyPath) {
-            core.info(`Initial cacheDependencyPath: ${cacheDependencyPath}`);
             const githubWorkspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
-            core.info(`GITHUB_WORKSPACE: ${githubWorkspace}`);
-            const actionPath = process.env.GITHUB_ACTION_PATH || '';
             const resolvedPath = path.resolve(cacheDependencyPath);
             // Check if the file is within the GITHUB_WORKSPACE
             if (!resolvedPath.startsWith(githubWorkspace)) {
                 core.info('Resolved path is outside of GITHUB_WORKSPACE.');
+                const actionPath = process.env.GITHUB_ACTION_PATH || '';
                 // Create a temporary directory within the GITHUB_WORKSPACE
                 const filePaths = resolvedPath
                     .split('\n')
                     .map(filePath => filePath.trim());
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
-                core.info(`Temporary directory created: ${tempDir}`);
-                const tempFilePaths = filePaths.map(filePath => {
-                    const resolvedFilePath = path.resolve(filePath);
+                // Handle wildcard pattern files
+                const traverseDir = (dir, pattern) => {
+                    const matchedFiles = [];
+                    const entries = fs_1.default.readdirSync(dir, { withFileTypes: true });
+                    const regexPattern = new RegExp('^' +
+                        pattern
+                            .replace(/\*\*/g, '.*')
+                            .replace(/\*/g, '[^/]*')
+                            .replace(/(\w+)\*/g, '$1(-[^/]+)?')
+                            .replace(/\.(\w+)$/, '(\\.[^/]+)?') +
+                        '$');
+                    for (const entry of entries) {
+                        const fullPath = path.join(dir, entry.name);
+                        if (entry.isDirectory()) {
+                            matchedFiles.push(...traverseDir(fullPath, pattern));
+                        }
+                        else if (regexPattern.test(entry.name)) {
+                            matchedFiles.push(fullPath);
+                        }
+                    }
+                    return matchedFiles;
+                };
+                const tempFilePaths = filePaths
+                    .flatMap(filePath => {
+                    let resolvedPaths = [];
+                    if (filePath.includes('*')) {
+                        const baseDir = filePath.startsWith('**')
+                            ? process.cwd()
+                            : path.dirname(filePath.replace(/\*\*\/?/, ''));
+                        const pattern = path.basename(filePath).replace('*', '.*');
+                        resolvedPaths = traverseDir(baseDir, pattern);
+                    }
+                    else {
+                        resolvedPaths = [path.resolve(filePath)];
+                    }
+                    return resolvedPaths;
+                })
+                    .map(resolvedFilePath => {
                     const relativePath = resolvedFilePath.startsWith(actionPath)
                         ? resolvedFilePath.slice(actionPath.length + 1)
                         : resolvedFilePath;
-                    let updatedPath = path.join(tempDir, relativePath);
+                    const updatedPath = path.join(tempDir, relativePath);
                     fs_1.default.mkdirSync(path.dirname(updatedPath), { recursive: true });
                     fs_1.default.copyFileSync(resolvedFilePath, updatedPath);
                     return updatedPath;
                 });
+                const sortedTempFilePaths = tempFilePaths.sort(); // Sort file paths to ensure consistent order
+                const fileHashes = sortedTempFilePaths.map(filePath => {
+                    const fileContents = fs_1.default.readFileSync(filePath, 'utf8'); // Read file contents
+                    return crypto.createHash('sha256').update(fileContents).digest('hex'); // Hash file contents
+                });
                 cacheDependencyPath = tempFilePaths.join('\n');
-                core.info(`Updated cacheDependencyPath: ${cacheDependencyPath}`);
             }
         }
         const cacheDistributor = (0, cache_factory_1.getCacheDistributor)(cache, pythonVersion, cacheDependencyPath);
