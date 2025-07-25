@@ -55,13 +55,11 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           `Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`
         );
         // Convert the pattern to a proper regular expression
+        // const regexPattern = new RegExp(
+        //   '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
+        // );
         const regexPattern = new RegExp(
-          '^' +
-            pattern
-              .replace(/\./g, '\\.')
-              .replace(/\*\*/g, '.*')
-              .replace(/\*/g, '[^/]*') +
-            '$'
+          '^' + pattern.replace(/\./g, '\\.').replace(/\*/g, '.*') + '$'
         );
 
         core.info(`Generated regex pattern: ${regexPattern}`);
