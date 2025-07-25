@@ -96845,16 +96845,7 @@ function cacheDependencies(cache, pythonVersion) {
                     const entries = fs_1.default.readdirSync(dir, { withFileTypes: true });
                     core.info(`Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`);
                     // Convert the pattern to a proper regular expression
-                    // const regexPattern = new RegExp(
-                    //   '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
-                    // );
-                    const regexPattern = new RegExp('^' +
-                        pattern
-                            .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // Escape special regex characters
-                            .replace(/\*\*/g, '.*') // Replace ** with .*
-                            .replace(/\*/g, '[^/]*') // Replace * with [^/]* (matches anything except /)
-                            .replace(/\?/g, '.') + // Replace ? with . (matches a single character)
-                        '$');
+                    const regexPattern = new RegExp('^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$');
                     core.info(`Generated regex pattern: ${regexPattern}`);
                     for (const entry of entries) {
                         const fullPath = path.join(dir, entry.name);

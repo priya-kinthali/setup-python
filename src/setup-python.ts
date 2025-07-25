@@ -55,18 +55,10 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
           `Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`
         );
         // Convert the pattern to a proper regular expression
-        // const regexPattern = new RegExp(
-        //   '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
-        // );
         const regexPattern = new RegExp(
-          '^' +
-            pattern
-              .replace(/[.+?^${}()|[\]\\]/g, '\\$&') // Escape special regex characters
-              .replace(/\*\*/g, '.*') // Replace ** with .*
-              .replace(/\*/g, '[^/]*') // Replace * with [^/]* (matches anything except /)
-              .replace(/\?/g, '.') + // Replace ? with . (matches a single character)
-            '$'
+          '^' + pattern.replace(/\*\*/g, '.*').replace(/\*/g, '.*') + '$'
         );
+
         core.info(`Generated regex pattern: ${regexPattern}`);
 
         for (const entry of entries) {
