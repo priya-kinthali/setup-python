@@ -96835,8 +96835,7 @@ function cacheDependencies(cache, pythonVersion) {
                 // Create a temporary directory within the GITHUB_WORKSPACE
                 const filePaths = resolvedPath
                     .split('\n')
-                    .map(filePath => filePath.trim())
-                    .sort();
+                    .map(filePath => filePath.trim());
                 core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);
@@ -96899,6 +96898,12 @@ function cacheDependencies(cache, pythonVersion) {
                 })
                     .map(resolvedFilePath => {
                     core.info(`Resolved File Path: ${resolvedFilePath}`);
+                    // Check for wildcard patterns
+                    if (resolvedFilePath.includes('*') ||
+                        resolvedFilePath.includes('**')) {
+                        core.info(`Wildcard detected in path: ${resolvedFilePath}`);
+                        return resolvedFilePath; // Return the original path with wildcard patterns
+                    }
                     // Extract the part of resolvedPath excluding actionPath
                     const relativePath = resolvedFilePath.startsWith(actionPath)
                         ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash

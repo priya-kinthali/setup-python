@@ -40,8 +40,7 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       // Create a temporary directory within the GITHUB_WORKSPACE
       const filePaths = resolvedPath
         .split('\n')
-        .map(filePath => filePath.trim())
-        .sort();
+        .map(filePath => filePath.trim());
       core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
       const tempDir = fs.mkdtempSync(
         path.join(githubWorkspace, 'setup-python-')
@@ -120,6 +119,15 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
         })
         .map(resolvedFilePath => {
           core.info(`Resolved File Path: ${resolvedFilePath}`);
+
+          // Check for wildcard patterns
+          if (
+            resolvedFilePath.includes('*') ||
+            resolvedFilePath.includes('**')
+          ) {
+            core.info(`Wildcard detected in path: ${resolvedFilePath}`);
+            return resolvedFilePath; // Return the original path with wildcard patterns
+          }
 
           // Extract the part of resolvedPath excluding actionPath
           const relativePath = resolvedFilePath.startsWith(actionPath)
