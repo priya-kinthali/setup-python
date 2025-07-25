@@ -96835,7 +96835,8 @@ function cacheDependencies(cache, pythonVersion) {
                 // Create a temporary directory within the GITHUB_WORKSPACE
                 const filePaths = resolvedPath
                     .split('\n')
-                    .map(filePath => filePath.trim());
+                    .map(filePath => filePath.trim())
+                    .sort();
                 core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
                 const tempDir = fs_1.default.mkdtempSync(path.join(githubWorkspace, 'setup-python-'));
                 core.info(`Temporary directory created: ${tempDir}`);

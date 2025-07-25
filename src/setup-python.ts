@@ -40,7 +40,8 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       // Create a temporary directory within the GITHUB_WORKSPACE
       const filePaths = resolvedPath
         .split('\n')
-        .map(filePath => filePath.trim());
+        .map(filePath => filePath.trim())
+        .sort();
       core.info(`File paths to be processed: ${JSON.stringify(filePaths)}`); // Log the filePaths array
       const tempDir = fs.mkdtempSync(
         path.join(githubWorkspace, 'setup-python-')
