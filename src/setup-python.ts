@@ -29,14 +29,14 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
     core.info(`Initial cacheDependencyPath: ${cacheDependencyPath}`);
     const githubWorkspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
     core.info(`GITHUB_WORKSPACE: ${githubWorkspace}`);
-    const actionPath = process.env.GITHUB_ACTION_PATH || '';
-    core.info(`Action Path: ${actionPath}`);
     // Resolve the absolute path of the input file
     const resolvedPath = path.resolve(cacheDependencyPath);
     core.info(`Resolved absolute path of cacheDependencyPath: ${resolvedPath}`);
     // Check if the file is within the GITHUB_WORKSPACE
     if (!resolvedPath.startsWith(githubWorkspace)) {
       core.info('Resolved path is outside of GITHUB_WORKSPACE.');
+      const actionPath = process.env.GITHUB_ACTION_PATH || '';
+      core.info(`Action Path: ${actionPath}`);
       // Create a temporary directory within the GITHUB_WORKSPACE
       const filePaths = resolvedPath
         .split('\n')
@@ -47,41 +47,24 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
       );
       core.info(`Temporary directory created: ${tempDir}`);
       const traverseDir = (dir: string, pattern: string): string[] => {
-        core.info(`Traversing directory: ${dir}`);
         const matchedFiles: string[] = [];
-
         const entries = fs.readdirSync(dir, {withFileTypes: true});
-        core.info(
-          `Entries found in directory: ${entries.map(entry => entry.name).join(', ')}`
-        );
-        // Convert the pattern to a proper regular expression
         const regexPattern = new RegExp(
           '^' +
             pattern
-              .replace(/\*\*/g, '.*') // Match any subdirectory
-              .replace(/\*/g, '[^/]*') // Match any file name in the current directory
-              .replace(/(\w+)\*/g, '$1(-[^/]+)?') // Dynamically handle optional suffixes for any word followed by '*'
-              .replace(/\.(\w+)$/, '(\\.[^/]+)?') + // Dynamically handle file extensions
+              .replace(/\*\*/g, '.*')
+              .replace(/\*/g, '[^/]*')
+              .replace(/(\w+)\*/g, '$1(-[^/]+)?')
+              .replace(/\.(\w+)$/, '(\\.[^/]+)?') +
             '$'
         );
 
-        core.info(`Generated regex pattern: ${regexPattern}`);
-
         for (const entry of entries) {
           const fullPath = path.join(dir, entry.name);
-          core.info(`Testing file: ${fullPath}`);
-          core.info(`Processing entry: ${entry.name}, Full path: ${fullPath}`);
-
           if (entry.isDirectory()) {
-            core.info(`Entry is a directory: ${entry.name}`);
-            // Recursively traverse subdirectories
             matchedFiles.push(...traverseDir(fullPath, pattern));
-            // } else if (entry.name.match(new RegExp(pattern.replace('*', '.*')))) {
           } else if (regexPattern.test(entry.name)) {
-            core.info(`File matches pattern: ${entry.name}`);
             matchedFiles.push(fullPath);
-          } else {
-            core.info(`File does not match pattern: ${entry.name}`);
           }
         }
 
@@ -90,57 +73,25 @@ async function cacheDependencies(cache: string, pythonVersion: string) {
 
       const tempFilePaths = filePaths
         .flatMap(filePath => {
-          core.info(`File Path: ${filePath}`);
-
           let resolvedPaths: string[] = [];
           if (filePath.includes('*')) {
-            core.info(`Wildcard pattern detected in filePath: ${filePath}`);
-
-            // Resolve the base directory by removing the wildcard part
             const baseDir = filePath.startsWith('**')
               ? process.cwd()
               : path.dirname(filePath.replace(/\*\*\/?/, ''));
-            core.info(`Base directory resolved to: ${baseDir}`);
-
             const pattern = path.basename(filePath).replace('*', '.*');
-            core.info(`Pattern to match: ${pattern}`);
-
-            // Traverse the directory recursively to find matching files
             resolvedPaths = traverseDir(baseDir, pattern);
           } else {
-            core.info(
-              `No wildcard pattern detected. Resolving single file path: ${filePath}`
-            );
             resolvedPaths = [path.resolve(filePath)];
-            core.info(`Resolved file path: ${resolvedPaths[0]}`);
           }
-
           return resolvedPaths;
         })
         .map(resolvedFilePath => {
-          core.info(`Resolved File Path: ${resolvedFilePath}`);
-
-          // Extract the part of resolvedPath excluding actionPath
           const relativePath = resolvedFilePath.startsWith(actionPath)
-            ? resolvedFilePath.slice(actionPath.length + 1) // +1 to remove the trailing slash
+            ? resolvedFilePath.slice(actionPath.length + 1)
             : resolvedFilePath;
-          core.info(`Relative Path (excluding actionPath): ${relativePath}`);
-
-          // Append the relative path to tempDir
           const updatedPath = path.join(tempDir, relativePath);
-          core.info(`Updated Path: ${updatedPath}`);
-
-          // Ensure destination directory exists
           fs.mkdirSync(path.dirname(updatedPath), {recursive: true});
-
-          // Copy the file to the updated path
           fs.copyFileSync(resolvedFilePath, updatedPath);
-          core.info(`Copied: ${resolvedFilePath} -> ${updatedPath}`);
-
-          // Read and log the contents of the copied file
-          const fileContents = fs.readFileSync(updatedPath, 'utf8');
-          core.info(`Contents of ${updatedPath}:\n${fileContents}`);
-
           return updatedPath;
         });
 
