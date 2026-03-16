@@ -45,7 +45,23 @@ class PoetryCache extends CacheDistributor {
   }
 
   protected async computeKeys() {
-    const hash = await glob.hashFiles(this.patterns);
+    const workspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
+    const actionPath = process.env['GITHUB_ACTION_PATH'] || '';
+
+    // Set roots to workspace and actionPath, allowFilesOutsideWorkspace true if actionPath present
+    let roots: string[] = [workspace];
+    let allowFilesOutsideWorkspace = false;
+    if (actionPath) {
+      roots.push(actionPath);
+      allowFilesOutsideWorkspace = true;
+    }
+
+    // Pass workspace and advanced options for globbing/hashing
+    const hash = await glob.hashFiles(this.patterns, workspace, {
+      roots,
+      allowFilesOutsideWorkspace
+      // Optionally: exclude: ['*.log']
+    });
     // "v2" is here to invalidate old caches of this cache distributor, which were created broken:
     const primaryKey = `${this.CACHE_KEY_PREFIX}-${process.env['RUNNER_OS']}-${process.arch}-python-${this.pythonVersion}-${this.packageManager}-v2-${hash}`;
     const restoreKey = undefined;

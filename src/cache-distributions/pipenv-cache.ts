@@ -2,7 +2,6 @@ import * as glob from '@actions/glob';
 import * as os from 'os';
 import * as path from 'path';
 import * as core from '@actions/core';
-
 import CacheDistributor from './cache-distributor';
 
 class PipenvCache extends CacheDistributor {
@@ -31,7 +30,23 @@ class PipenvCache extends CacheDistributor {
   }
 
   protected async computeKeys() {
-    const hash = await glob.hashFiles(this.patterns);
+    const workspace = process.env['GITHUB_WORKSPACE'] || process.cwd();
+    const actionPath = process.env['GITHUB_ACTION_PATH'] || '';
+
+    // Set roots to workspace and actionPath, allowFilesOutsideWorkspace true if actionPath present
+    let roots: string[] = [workspace];
+    let allowFilesOutsideWorkspace = false;
+    if (actionPath) {
+      roots.push(actionPath);
+      allowFilesOutsideWorkspace = true;
+    }
+
+    // Pass workspace and options for advanced globbing/hashing
+    const hash = await glob.hashFiles(this.patterns, workspace, {
+      roots,
+      allowFilesOutsideWorkspace
+      // Optionally: exclude: ['*.log']
+    });
     const primaryKey = `${this.CACHE_KEY_PREFIX}-${process.env['RUNNER_OS']}-${process.arch}-python-${this.pythonVersion}-${this.packageManager}-${hash}`;
     const restoreKey = undefined;
     return {
