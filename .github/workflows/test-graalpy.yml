@@ -37,6 +37,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
+      - name: Check native library availability
+        run: |
+          echo "=== Checking libcrypt ==="
+          ldconfig -p | grep libcrypt || echo "libcrypt NOT found in ldconfig"
+          echo ""
+          echo "=== Checking libffi ==="
+          ldconfig -p | grep libffi || echo "libffi NOT found in ldconfig"
+          echo ""
+          echo "=== OS Info ==="
+          cat /etc/os-release
+        if: runner.os == 'Linux'
+        shell: bash
       - name: setup-python ${{ matrix.graalpy }}
         id: setup-python
         uses: ./
