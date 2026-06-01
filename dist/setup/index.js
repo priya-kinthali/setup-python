@@ -54643,7 +54643,6 @@ async function useCpythonVersion(version, architecture, updateEnvironment, check
         //   manifest
         // );
         let foundRelease = null; // TEMP repro: simulates manifest fetch returning nothing
-        core.info(`foundRelease after manifest lookup: ${foundRelease}`);
         if (foundRelease && foundRelease.files && foundRelease.files.length > 0) {
             core.info(`Version ${semanticVersionSpec} is available for downloading`);
             await installer.installCpythonFromRelease(foundRelease);

@@ -114,7 +114,6 @@ export async function useCpythonVersion(
     //   manifest
     // );
     let foundRelease: any = null; // TEMP repro: simulates manifest fetch returning nothing
-    core.info(`foundRelease after manifest lookup: ${foundRelease}`);
 
     if (foundRelease && foundRelease.files && foundRelease.files.length > 0) {
       core.info(`Version ${semanticVersionSpec} is available for downloading`);
