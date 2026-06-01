@@ -108,19 +108,19 @@ export async function useCpythonVersion(
     core.info(
       `Version ${semanticVersionSpec} was not found in the local cache`
     );
-    const foundRelease = await installer.findReleaseFromManifest(
-      semanticVersionSpec,
-      architecture,
-      manifest
-    );
+    // const foundRelease = await installer.findReleaseFromManifest(
+    //   semanticVersionSpec,
+    //   architecture,
+    //   manifest
+    // );
+    let foundRelease: any = null; // TEMP repro: simulates manifest fetch returning nothing
+    core.info(`foundRelease after manifest lookup: ${foundRelease}`);
 
     if (foundRelease && foundRelease.files && foundRelease.files.length > 0) {
       core.info(`Version ${semanticVersionSpec} is available for downloading`);
       await installer.installCpythonFromRelease(foundRelease);
 
-      // installDir = tc.find('Python', semanticVersionSpec, architecture);
-      installDir = null; // TEMP repro: simulates installCpythonFromRelease silently failing
-      core.info(`installDir after install attempt: ${installDir}`);
+      installDir = tc.find('Python', semanticVersionSpec, architecture);
     }
   }
 
