@@ -118,7 +118,9 @@ export async function useCpythonVersion(
       core.info(`Version ${semanticVersionSpec} is available for downloading`);
       await installer.installCpythonFromRelease(foundRelease);
 
-      installDir = tc.find('Python', semanticVersionSpec, architecture);
+      // installDir = tc.find('Python', semanticVersionSpec, architecture);
+      installDir = null; // TEMP repro: simulates installCpythonFromRelease silently failing
+      core.info(`installDir after install attempt: ${installDir}`);
     }
   }
 

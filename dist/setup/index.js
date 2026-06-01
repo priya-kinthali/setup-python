@@ -54641,7 +54641,9 @@ async function useCpythonVersion(version, architecture, updateEnvironment, check
         if (foundRelease && foundRelease.files && foundRelease.files.length > 0) {
             core.info(`Version ${semanticVersionSpec} is available for downloading`);
             await installer.installCpythonFromRelease(foundRelease);
-            installDir = tc.find('Python', semanticVersionSpec, architecture);
+            // installDir = tc.find('Python', semanticVersionSpec, architecture);
+            installDir = null; // TEMP repro: simulates installCpythonFromRelease silently failing
+            core.info(`installDir after install attempt: ${installDir}`);
         }
     }
     if (!installDir) {
