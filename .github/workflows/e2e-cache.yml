@@ -6,7 +6,7 @@ on:
       - '**.md'
   push:
     branches:
-      - main
+      - test-eol
       - releases/*
     paths-ignore:
       - '**.md'
@@ -33,14 +33,14 @@ jobs:
           ]
         python-version:
           [
-            '3.9',
             'pypy-3.9-v7.x',
             '3.10',
             'pypy-3.10-v7.x',
             '3.11',
             'pypy-3.11-v7.x',
             '3.12',
-            '3.13'
+            '3.13',
+            '3.14'
           ]
         exclude:
           - os: windows-latest
@@ -75,7 +75,15 @@ jobs:
             macos-15-intel
           ]
         python-version:
-          ['3.10', 'pypy-3.10-v7.x', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13']
+          [
+            '3.10',
+            'pypy-3.10-v7.x',
+            '3.11',
+            'pypy-3.11-v7.x',
+            '3.12',
+            '3.13',
+            '3.14'
+          ]
         exclude:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
@@ -133,14 +141,14 @@ jobs:
           ]
         python-version:
           [
-            '3.9',
             'pypy-3.9-v7.x',
             '3.10',
             'pypy-3.10-v7.x',
             '3.11',
             'pypy-3.11-v7.x',
             '3.12',
-            '3.13'
+            '3.13',
+            '3.14'
           ]
     steps:
       - uses: actions/checkout@v6
@@ -179,14 +187,14 @@ jobs:
           ]
         python-version:
           [
-            '3.9',
             'pypy-3.9-v7.x',
             '3.10',
             'pypy-3.10-v7.x',
             '3.11',
             'pypy-3.11-v7.x',
             '3.12',
-            '3.13'
+            '3.13',
+            '3.14'
           ]
         exclude:
           - os: windows-latest
@@ -221,7 +229,15 @@ jobs:
             macos-15-intel
           ]
         python-version:
-          ['3.10', 'pypy-3.10-v7.x', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13']
+          [
+            '3.10',
+            'pypy-3.10-v7.x',
+            '3.11',
+            'pypy-3.11-v7.x',
+            '3.12',
+            '3.13',
+            '3.14'
+          ]
         exclude:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
@@ -276,7 +292,7 @@ jobs:
             macos-latest,
             macos-15-intel
           ]
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python
@@ -304,7 +320,7 @@ jobs:
             macos-latest,
             macos-15-intel
           ]
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python
@@ -333,7 +349,7 @@ jobs:
             macos-latest,
             macos-15-intel
           ]
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python
@@ -359,7 +375,7 @@ jobs:
             macos-latest,
             macos-15-intel
           ]
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python
