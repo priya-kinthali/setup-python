@@ -56,7 +56,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: 'pip'
       - name: Install dependencies
-        run: pip install numpy pandas requests
+        run: pip install --retries 5 --timeout 60 numpy pandas requests
 
   python-pipenv-dependencies-caching:
     name: Test pipenv (Python ${{ matrix.python-version}}, ${{ matrix.os }})
@@ -74,27 +74,14 @@ jobs:
             macos-latest,
             macos-15-intel
           ]
-        python-version:
-          [
-            '3.10',
-            'pypy-3.10-v7.x',
-            '3.11',
-            'pypy-3.11-v7.x',
-            '3.12',
-            '3.13',
-            '3.14'
-          ]
+        python-version: ['3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
         exclude:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
           - os: ubuntu-22.04
             python-version: pypy-3.11-v7.x
           - os: ubuntu-22.04-arm
-            python-version: pypy-3.10-v7.x
-          - os: ubuntu-22.04-arm
             python-version: pypy-3.11-v7.x
-          - os: ubuntu-22.04-arm
-            python-version: pypy-3.10-v7.x
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python
@@ -150,6 +137,17 @@ jobs:
             '3.13',
             '3.14'
           ]
+        exclude:
+          - os: windows-latest
+            python-version: pypy-3.11-v7.x
+          - os: ubuntu-22.04
+            python-version: pypy-3.11-v7.x
+          - os: ubuntu-22.04-arm
+            python-version: pypy-3.10-v7.x
+          - os: ubuntu-22.04-arm
+            python-version: pypy-3.11-v7.x
+          - os: macos-latest
+            python-version: pypy-3.9-v7.x
     steps:
       - uses: actions/checkout@v6
       - name: Install poetry
@@ -210,7 +208,7 @@ jobs:
           cache: 'pip'
           cache-dependency-path: __tests__/data/requirements.txt
       - name: Install dependencies
-        run: pip install numpy pandas requests
+        run: pip install --retries 5 --timeout 60 numpy pandas requests
 
   python-pipenv-dependencies-caching-path:
     name: Test pipenv (Python ${{ matrix.python-version}}, ${{ matrix.os }}, caching path)
@@ -228,23 +226,12 @@ jobs:
             macos-latest,
             macos-15-intel
           ]
-        python-version:
-          [
-            '3.10',
-            'pypy-3.10-v7.x',
-            '3.11',
-            'pypy-3.11-v7.x',
-            '3.12',
-            '3.13',
-            '3.14'
-          ]
+        python-version: ['3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
         exclude:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
           - os: ubuntu-22.04
             python-version: pypy-3.11-v7.x
-          - os: ubuntu-22.04-arm
-            python-version: pypy-3.10-v7.x
           - os: ubuntu-22.04-arm
             python-version: pypy-3.11-v7.x
     steps:
@@ -302,7 +289,7 @@ jobs:
           cache: 'pip'
           pip-version: '25.0.1'
       - name: Install dependencies
-        run: pip install numpy pandas requests
+        run: pip install --retries 5 --timeout 60 numpy pandas requests
 
   python-pip-dependencies-caching-path-with-pip-version:
     name: Test pip (Python ${{ matrix.python-version}}, ${{ matrix.os }}, caching path)
@@ -331,7 +318,7 @@ jobs:
           cache-dependency-path: __tests__/data/requirements.txt
           pip-version: '25.0.1'
       - name: Install dependencies
-        run: pip install numpy pandas requests
+        run: pip install --retries 5 --timeout 60 numpy pandas requests
 
   python-pip-dependencies-caching-with-pip-install:
     name: Test pip (Python ${{ matrix.python-version}}, ${{ matrix.os }})
