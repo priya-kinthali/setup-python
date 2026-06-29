@@ -33,7 +33,6 @@ jobs:
           ]
         python-version:
           [
-            'pypy-3.9-v7.x',
             '3.10',
             'pypy-3.10-v7.x',
             '3.11',
@@ -47,8 +46,6 @@ jobs:
             python-version: pypy-3.10-v7.x
           - os: windows-latest
             python-version: pypy-3.11-v7.x
-          - os: macos-latest
-            python-version: pypy-3.9-v7.x
 
     steps:
       - uses: actions/checkout@v6
@@ -130,7 +127,6 @@ jobs:
           ]
         python-version:
           [
-            'pypy-3.9-v7.x',
             '3.10',
             'pypy-3.10-v7.x',
             '3.11',
@@ -148,8 +144,6 @@ jobs:
             python-version: pypy-3.10-v7.x
           - os: ubuntu-22.04-arm
             python-version: pypy-3.11-v7.x
-          - os: macos-latest
-            python-version: pypy-3.9-v7.x
     steps:
       - uses: actions/checkout@v6
       - name: Install poetry
@@ -187,7 +181,6 @@ jobs:
           ]
         python-version:
           [
-            'pypy-3.9-v7.x',
             '3.10',
             'pypy-3.10-v7.x',
             '3.11',
@@ -201,8 +194,6 @@ jobs:
             python-version: pypy-3.10-v7.x
           - os: windows-latest
             python-version: pypy-3.11-v7.x
-          - os: macos-latest
-            python-version: pypy-3.9-v7.x
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python

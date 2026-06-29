@@ -31,15 +31,11 @@ jobs:
             macos-15-intel
           ]
         pypy:
-          - 'pypy-2.7'
           - 'pypy-3.10'
-          - 'pypy3.9'
-          - 'pypy-2.7-v7.3.23'
           - 'pypy-3.10-v7.3.19'
           - 'pypy-3.10-v7.3.18'
           - 'pypy-3.10-v7.3.x'
           - 'pypy-3.10-v7.x'
-          - 'pypy-2.7-v7.3.12rc1'
           - 'pypy-3.11-nightly'
           - 'pypy3.10-v7.3.19'
           - 'pypy3.11-v7.3.23'
@@ -94,7 +90,7 @@ jobs:
           - ubuntu-24.04
           - ubuntu-22.04-arm
           - ubuntu-24.04-arm
-        pypy: ['pypy-2.7', 'pypy-3.10', 'pypy-3.11']
+        pypy: ['pypy-3.10', 'pypy-3.11']
 
     steps:
       - name: Checkout
@@ -146,7 +142,7 @@ jobs:
             ubuntu-latest,
             macos-15-intel
           ]
-        pypy: ['pypy2.7', 'pypy3.9', 'pypy3.11-nightly', 'pypy3.11']
+        pypy: ['pypy3.11-nightly', 'pypy3.11']
 
     steps:
       - name: Checkout
@@ -230,7 +226,6 @@ jobs:
           python-version: |
             pypy-3.11-v7.3.x
             pypy-3.10-v7.3.x
-            pypy3.9
           check-latest: true
       - name: PyPy and Python version
         run: python --version
@@ -253,7 +248,7 @@ jobs:
         shell: bash
       - name: Assert expected binaries (or symlinks) are present
         run: |
-          EXECUTABLE='pypy3.9'
+          EXECUTABLE='pypy-3.10-v7.3.x'
           EXECUTABLE=${EXECUTABLE/pypy-/pypy}  # remove the first '-' in "pypy-X.Y" -> "pypyX.Y" to match executable name
           EXECUTABLE=${EXECUTABLE%%-*}  # remove any -* suffixe
           ${EXECUTABLE} --version
