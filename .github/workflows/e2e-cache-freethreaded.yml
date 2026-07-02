@@ -29,7 +29,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -59,7 +59,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -102,7 +102,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14, 3.14.6]
     steps:
@@ -134,7 +134,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -165,7 +165,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -209,7 +209,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -240,7 +240,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -272,7 +272,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:
@@ -301,7 +301,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: [3.13.14t, 3.14.6t]
         exclude:

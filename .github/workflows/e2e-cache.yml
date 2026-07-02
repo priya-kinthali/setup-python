@@ -29,7 +29,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version:
           ['3.10', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
@@ -65,7 +65,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
         exclude:
@@ -117,7 +117,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version:
           ['3.10', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
@@ -163,7 +163,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version:
           ['3.10', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
@@ -199,7 +199,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
         exclude:
@@ -252,7 +252,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:
@@ -283,7 +283,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:
@@ -315,7 +315,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:
@@ -344,7 +344,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:

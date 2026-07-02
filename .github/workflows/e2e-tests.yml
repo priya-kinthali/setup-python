@@ -25,7 +25,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
     steps:
       - name: Checkout

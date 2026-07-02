@@ -28,7 +28,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
         exclude:
@@ -75,7 +75,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
         exclude:
@@ -125,7 +125,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
         exclude:
@@ -173,7 +173,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, '==3.12.10', 3.13.14, 3.14.6]
         exclude:
@@ -226,7 +226,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
         exclude:
@@ -279,7 +279,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [pypy3.11-7.3.18, graalpy-24.1.2, 3.13.14, 3.15-dev]
         exclude:
@@ -287,6 +287,8 @@ jobs:
             python: graalpy-24.1.2
           - os: windows-11-arm
             python: graalpy-24.1.2
+          - os: windows-11-arm
+            python: pypy3.11-7.3.18
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -315,7 +317,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, 3.13.14, 3.14.6]
         exclude:
@@ -368,7 +370,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: [3.10.11, 3.11.9, 3.13.14, 3.14.6]
         exclude:
@@ -421,7 +423,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
     steps:
       - name: Checkout
@@ -464,7 +466,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
     steps:
       - name: Checkout
@@ -501,7 +503,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
     steps:
       - name: Checkout
@@ -539,7 +541,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python: ['3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:
@@ -575,7 +577,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         exclude:
@@ -611,7 +613,7 @@ jobs:
             windows-latest,
             windows-11-arm,
             macos-15-intel,
-            macos-latest,
+            macos-latest
           ]
     steps:
       - uses: actions/checkout@v6
