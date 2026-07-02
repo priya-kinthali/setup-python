@@ -23,13 +23,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version:
           ['3.10', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
@@ -55,21 +55,19 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version: ['3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
         exclude:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
           - os: ubuntu-22.04
-            python-version: pypy-3.11-v7.x
-          - os: ubuntu-22.04-arm
             python-version: pypy-3.11-v7.x
     steps:
       - uses: actions/checkout@v6
@@ -107,13 +105,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version:
           ['3.10', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
@@ -121,8 +119,6 @@ jobs:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
           - os: ubuntu-22.04
-            python-version: pypy-3.11-v7.x
-          - os: ubuntu-22.04-arm
             python-version: pypy-3.11-v7.x
     steps:
       - uses: actions/checkout@v6
@@ -151,13 +147,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version:
           ['3.10', '3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
@@ -183,21 +179,19 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version: ['3.11', 'pypy-3.11-v7.x', '3.12', '3.13', '3.14']
         exclude:
           - os: windows-latest
             python-version: pypy-3.11-v7.x
           - os: ubuntu-22.04
-            python-version: pypy-3.11-v7.x
-          - os: ubuntu-22.04-arm
             python-version: pypy-3.11-v7.x
     steps:
       - uses: actions/checkout@v6
@@ -236,13 +230,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
@@ -264,13 +258,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
@@ -293,13 +287,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
@@ -319,13 +313,13 @@ jobs:
       matrix:
         os:
           [
+            ubuntu-22.04,
             ubuntu-latest,
             ubuntu-24.04-arm,
-            ubuntu-22.04,
-            ubuntu-22.04-arm,
             windows-latest,
+            windows-11-arm,
+            macos-15-intel,
             macos-latest,
-            macos-15-intel
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
     steps:
