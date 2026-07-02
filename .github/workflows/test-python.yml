@@ -31,6 +31,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -75,6 +78,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -122,6 +128,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -167,6 +176,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, '==3.12.10', 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -217,6 +229,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, 3.12.10, 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -303,6 +318,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -353,6 +371,9 @@ jobs:
             macos-latest,
           ]
         python: [3.10.11, 3.11.9, 3.13.14, 3.14.6]
+        exclude:
+          - os: windows-11-arm
+            python: 3.10.11
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -521,6 +542,9 @@ jobs:
             macos-latest,
           ]
         python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        exclude:
+          - os: windows-11-arm
+            python: '3.10'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -554,6 +578,9 @@ jobs:
             macos-latest,
           ]
         python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        exclude:
+          - os: windows-11-arm
+            python-version: '3.10'
     steps:
       - uses: actions/checkout@v6
       - name: Setup Python and check latest
@@ -592,7 +619,6 @@ jobs:
         uses: ./
         with:
           python-version: |
-            3.10
             3.11
             3.12
             3.13
