@@ -213,7 +213,7 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v6
-      - name: Setup PyPy and check latest
+      - name: Setup multiple PyPy versions
         uses: ./
         with:
           python-version: |

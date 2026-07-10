@@ -512,7 +512,7 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v6
-      - name: Setup Python and check latest
+      - name: Setup multiple Python versions
         id: setup-python
         uses: ./
         with:
