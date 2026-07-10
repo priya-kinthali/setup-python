@@ -213,12 +213,13 @@ jobs:
           ]
     steps:
       - uses: actions/checkout@v6
-      - name: Setup multiple PyPy versions
+      - name: Setup PyPy and check latest
         uses: ./
         with:
           python-version: |
-            pypy-3.11-v7.3.22
-            pypy-3.11-v7.3.23
+            pypy-3.11-v7.3.x
+            pypy-3.10-v7.3.x
+          check-latest: true
       - name: PyPy and Python version
         run: python --version
 
@@ -233,14 +234,14 @@ jobs:
 
       - name: Assert expected binaries (or symlinks) are present
         run: |
-          EXECUTABLE="pypy-3.11-v7.3.23"
+          EXECUTABLE="pypy-3.11-v7.3.x"
           EXECUTABLE=${EXECUTABLE/-/}  # remove the first '-' in "pypy-X.Y" -> "pypyX.Y" to match executable name
           EXECUTABLE=${EXECUTABLE%%-*}  # remove any -* suffixe
           ${EXECUTABLE} --version
         shell: bash
       - name: Assert expected binaries (or symlinks) are present
         run: |
-          EXECUTABLE='pypy-3.11-v7.3.22'
+          EXECUTABLE='pypy-3.10-v7.3.x'
           EXECUTABLE=${EXECUTABLE/pypy-/pypy}  # remove the first '-' in "pypy-X.Y" -> "pypyX.Y" to match executable name
           EXECUTABLE=${EXECUTABLE%%-*}  # remove any -* suffixe
           ${EXECUTABLE} --version
